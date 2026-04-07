@@ -1,4 +1,4 @@
-class chicken {
+class Chicken {
 
 
 

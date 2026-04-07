@@ -2,7 +2,7 @@ class charachter {
 
 
 
-    jamp(){
+    jump(){
         console.log('Jump!');
     }
 }

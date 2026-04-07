@@ -1,6 +1,13 @@
 let canvas;
 let ctx;
-let character = new moveableObject();
+let character = new charachter();
+
+enemies = [
+    new chicken(),
+    new chicken(),
+    new chicken()
+ 
+]
 
 function init() {
     canvas = document.getElementById("canvas");

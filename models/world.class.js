@@ -1,11 +1,11 @@
-class World{
+class World {
 
 
     character = new Character();
     enemies = [
     new Chicken(),
     new Chicken(),
-    new Chicken()
+    new Chicken(),
  
 ];
 
@@ -17,6 +17,6 @@ class World{
     }
 
     draw() {
-        this.ctx.drawImage(this.character.img, this.character.x, this.character.y, 200, 400);
+        this.ctx.drawImage(this.character.img, this.character.x, this.character.y, this.character.height, this.character.width);
     }
 }

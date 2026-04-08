@@ -5,8 +5,8 @@ body{
 }
 
 canvas{
-    height: 480px;
-    width: 720px;
+    /* height: 480px;
+    width: 720px; */
     background-color: black;
 }
 

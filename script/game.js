@@ -8,6 +8,7 @@ function init() {
 
 
     console.log('My Character', world.character);
+    
 
 }
     

@@ -1,9 +1,9 @@
 class MoveableObject {
     x = 80;
-    y = 50; 
+    y = 100; 
     img;
+    width = 180;
     height = 100;
-    width = 250;
 
 
     // laodImage('img')

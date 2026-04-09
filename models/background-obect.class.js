@@ -1,10 +1,11 @@
 class backgroudObject extends MoveableObject {
 
-    height = 220;
-    width = 480;   
-    constructor(loadImage, x, y) {
-        super().loadImage(loadImage);
+    height = 480;
+    width = 720;   
+    constructor(loadPath, x) {
+        super().loadImage(loadPath);
         this.x = x;
-        this.y = y;
+        this.y = 480 - this.height;
     }
 }
+

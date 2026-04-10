@@ -1,6 +1,10 @@
-class KeyBoard extends Character {
+class Keyboard {
 
-    constructor() {
-        onclick
-    }
+    LEFT = false;
+    RIGHT = false;
+    UP = false;
+    DOWN = false;
+    SPACE = false;
+
+    
 }

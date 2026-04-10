@@ -3,7 +3,7 @@ class Character extends MoveableObject {
     y = 195;
     height = 230;
     width = 120;
-    speed = 10;
+    speed = 10; 
     IMAGES_WALKING = [
         
             'img/2_character_pepe/2_walk/W-21.png',
@@ -30,17 +30,15 @@ class Character extends MoveableObject {
         if(this.world.keyboard.RIGHT){
            this.x += this.speed;
            this.otherDirection = false;
+        }
 
-            }
-        }, 1000 / 60);
-
-        setInterval(() => {
         if(this.world.keyboard.LEFT){
            this.x -= this.speed;
            this.otherDirection = true;
-
-            }
-        }, 1000/60);
+        }
+        
+        this.world.camera_x = -this.x;
+        }, 1000 / 60);
 
         setInterval(() => {
         if(this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
@@ -52,7 +50,8 @@ class Character extends MoveableObject {
         this.currentImages++;
         }
 
-        }, 50);
+        }, 50)
+        ;
         
     }
 

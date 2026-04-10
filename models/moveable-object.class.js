@@ -5,6 +5,8 @@ class MoveableObject {
     width = 100;
     img;
     imgCache = {};
+    currentImages = 0;
+    speed = 0.15;
 
     // laodImage('img')
     loadImage(path) {
@@ -22,7 +24,7 @@ class MoveableObject {
         array.forEach((path) => {
             let img = new Image();
             img.src = path;
-            this.imgCache[path] = path; 
+            this.imgCache[path] = img; 
         });
     }
 
@@ -31,6 +33,8 @@ class MoveableObject {
     }
 
     moveLeft() {
-        console.log('Move left!');
+        setInterval(() => {
+            this.x -= this.speed; // Bewegt die Wolke nach links
+        }, 1000/60); // ca. 60 FPS
     }
 } 

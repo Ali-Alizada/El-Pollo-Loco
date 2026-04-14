@@ -3,11 +3,12 @@ class World {
 
     character = new Character();
     level = level1;
-
     canvas;
     ctx;
     keyboard;
     camera_x = 0;
+
+ 
     
 
     constructor(canvas, keyboard) {
@@ -20,6 +21,11 @@ class World {
 
     setWorld() {
         this.character.world = this;
+
+        
+        this.level.enemies.forEach(enemy => {
+            enemy.world = this;
+        });
     }
 
     draw() {

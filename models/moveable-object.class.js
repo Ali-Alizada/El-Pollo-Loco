@@ -23,10 +23,17 @@ class MoveableObject {
 
     loadImages(array){
         array.forEach((path) => {
-            let img = new Image();
+            let img = new Image(); 
             img.src = path;
             this.imgCache[path] = img; 
         });
+    }
+
+    playAnimation(images) {
+        let i = this.currentImages % images.length;
+        let path = images[i];
+        this.img = this.imgCache[path];
+        this.currentImages++;
     }
 
     moveRight() {

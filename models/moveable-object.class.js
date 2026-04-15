@@ -8,6 +8,24 @@ class MoveableObject {
     currentImages = 0;
     speed = 0.15;
     otherDirection = false;
+    speedY = 0;
+    acceleration = 2.5;
+    energy = 100;
+
+
+    applayGravity() {
+        setInterval(() => {
+            if(this.isAboveGround() || this.speedY > 0) {
+            this.y -= this.speedY;
+            this.speedY -= this.acceleration;
+            }
+
+        }, 1000 / 25);
+    }
+
+    isAboveGround() {
+        return this.y < 195;
+    }
 
     // laodImage('img')
     loadImage(path) {
@@ -15,6 +33,33 @@ class MoveableObject {
         this.img.src = path;
  
     }
+
+    draw(ctx) {
+         ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+    }
+
+    drawFrame(ctx) {
+        if(this instanceof Character || this instanceof Chicken) {
+            ctx.beginPath();
+            ctx.lineWidth = '2';
+            ctx.strokeStyle = 'blue';
+            ctx.rect(this.x, this.y, this.width, this.height);
+            ctx.stroke();
+        }
+    }
+
+    // isColliding(moveableObject) {
+    //     return this.x + this.width > moveableObject.x && this.y + this.height > moveableObject.y && this.x < moveableObject.x && this.y < moveableObject.y + moveableObject.height;
+    // }
+
+    // Kollisionserkennung mit einem anderen beweglichen Objekt -> chicken mit dem Charakter!
+    isColliding(moveableObject) {
+    return this.x + this.width > moveableObject.x &&
+    this.y + this.height > moveableObject.y &&
+    this.x < moveableObject.x &&
+    this.y < moveableObject.y + moveableObject.height;
+
+}
 
     /**
      * 
@@ -37,12 +82,18 @@ class MoveableObject {
     }
 
     moveRight() {
-        console.log('Move right!');
+        this.x += this.speed;
+        
+        
     }
 
     moveLeft() {
-        setInterval(() => {
-            this.x -= this.speed; // Bewegt die Wolke nach links
-        }, 1000/60); // ca. 60 FPS
+            this.x -= this.speed; 
+            
+         
+    }
+
+    jump() {
+        this.speedY = 30;
     }
 } 

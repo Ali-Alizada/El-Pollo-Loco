@@ -8,6 +8,7 @@ class World {
     keyboard;
     camera_x = 0;
 
+
  
     
 
@@ -17,6 +18,7 @@ class World {
         this.keyboard = keyboard;
         this.draw();
         this.setWorld();
+        this.checkCollisions();
     }
 
     setWorld() {
@@ -28,11 +30,26 @@ class World {
         });
     }
 
+    checkCollisions() {
+        setInterval(() => {
+            this.level.enemies.forEach((enemy) => {
+                if(this.character.isColliding(enemy)) {
+                    this.character.energy -= 5;
+                    console.log('collision with character, energy', this.character.energy);
+
+
+                }
+
+            });
+        }, 1000)
+    }
+
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        this.ctx.translate(this.camera_x, 0);
 
+        this.ctx.translate(this.camera_x, 0);
+ 
         this.addObjectsToMap(this.level.backgroundObjects);
         this.addObjectsToMap(this.level.clouds);
         this.addToMap(this.character);
@@ -57,21 +74,28 @@ class World {
     }
 
     addToMap(moveableObject) {
-        if(moveableObject.otherDirection){
+        if (moveableObject.otherDirection){
+           this.flipImage(moveableObject);
+        }
+
+            moveableObject.draw(this.ctx);
+            moveableObject.drawFrame(this.ctx);
+
+        if (moveableObject.otherDirection){ 
+           this.flipImageBack(moveableObject);
+        }
+    }
+
+    flipImage(moveableObject) {
             this.ctx.save();
             this.ctx.translate(moveableObject.width, 0)
             this.ctx.scale(-1,1)
             moveableObject.x = moveableObject.x * -1;
-        }
-         
-        this.ctx.drawImage(moveableObject.img, moveableObject.x, moveableObject.y, moveableObject.width, moveableObject.height);
-        if(moveableObject.otherDirection){
-            moveableObject.x = moveableObject.x * -1;
-            this.ctx.restore();
-
-        }
     }
 
-    
+    flipImageBack(moveableObject) {
+            moveableObject.x = moveableObject.x * -1;
+            this.ctx.restore();
+    }
     
 }

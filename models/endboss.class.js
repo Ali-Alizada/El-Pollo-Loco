@@ -61,18 +61,21 @@ class Endboss extends MoveableObject {
         this.animate();
     }
 
-        animate() {
+    animate() {
 
         setInterval(() => {
 
             if (this.isDead()) {
                 this.playAnimation(this.IMAGES_DEAD);
+                // console.log(this.dead(), 'Endboss ist tot!');
 
             } else if (this.isHurt()) {
                 this.playAnimation(this.IMAGES_HURT);
+                // console.log(this.isHurt(), 'Endboss ist verletzt!');
 
             } else if (this.isAttacking()) {
                 this.playAnimation(this.IMAGES_ATTACK);
+                // console.log(this.isAttacking(), 'Endboss greift an!');
 
                 this.x -= this.speed;   // 👉 bewegt sich beim Angriff
 
@@ -80,19 +83,14 @@ class Endboss extends MoveableObject {
                 this.playAnimation(this.IMAGES_ALERT);
 
                 this.x -= this.speed;   // 👉 läuft zum Spieler
+                // console.log(this.isAlert(), 'Endboss ist wachsam!');
 
             } else {
                 this.playAnimation(this.IMAGES_WALKING);
 
                 this.x -= this.speed;   // 👉 normales Laufen
+                // console.log('Endboss läuft normal!');
             }
-
-            console.log({
-            dead: this.isDead(),
-            hurt: this.isHurt(),
-            attack: this.isAttacking(),
-            alert: this.isAlert()
-            });
 
         }, 200);
     }

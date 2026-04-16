@@ -7,6 +7,7 @@ class World {
     ctx;
     keyboard;
     camera_x = 0;
+    statusBar = new Statusbar();
 
 
  
@@ -24,10 +25,13 @@ class World {
     setWorld() {
         this.character.world = this;
 
-        
         this.level.enemies.forEach(enemy => {
             enemy.world = this;
-        });
+        if (enemy instanceof Endboss) {
+            enemy.animate(); 
+            }
+     });
+
     }
 
     checkCollisions() {
@@ -46,17 +50,15 @@ class World {
 
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-
         this.ctx.translate(this.camera_x, 0);
  
         this.addObjectsToMap(this.level.backgroundObjects);
-        this.addObjectsToMap(this.level.clouds);
+        this.addObjectsToMap(this.level.clouds);       
         this.addToMap(this.character);
         this.addObjectsToMap(this.level.enemies);
 
         this.ctx.translate(-this.camera_x, 0);
-        
+        this.addToMap(this.statusBar);
   
 
         // Draw wird in der draw() Funktion aufgerufen, damit es immer wieder neu gezeichnet wird

@@ -11,6 +11,7 @@ class MoveableObject {
     speedY = 0;
     acceleration = 2.5;
     energy = 100;
+    lastHit = 0;
 
 
     applayGravity() {
@@ -48,9 +49,6 @@ class MoveableObject {
         }
     }
 
-    // isColliding(moveableObject) {
-    //     return this.x + this.width > moveableObject.x && this.y + this.height > moveableObject.y && this.x < moveableObject.x && this.y < moveableObject.y + moveableObject.height;
-    // }
 
     // Kollisionserkennung mit einem anderen beweglichen Objekt -> chicken mit dem Charakter!
     isColliding(moveableObject) {
@@ -59,8 +57,27 @@ class MoveableObject {
     this.x < moveableObject.x &&
     this.y < moveableObject.y + moveableObject.height;
 
-}
+    }
 
+    hit() {
+        this.energy -= 5;
+        if(this.energy < 0) {
+            this.energy = 0;
+        } else {
+            this.lastHit = new Date().getTime();
+        }
+    }
+
+    isHurt() {
+    let timepassed = new Date().getTime() - this.lastHit; // Time Derfernce in ms
+    timepassed = timepassed / 1000; // Time Defernce in s
+    return timepassed < 0.8;
+        
+    }
+    isDead() {
+        return this.energy == 0;
+    }
+    
     /**
      * 
      * @param {Array} array - ['img/img1.png', 'img/img2' ...] 

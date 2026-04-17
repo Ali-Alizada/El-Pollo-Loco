@@ -7,12 +7,13 @@ class World {
     ctx;
     keyboard;
     camera_x = 0;
-    statusBar = new Statusbar();
+    statusBarHealth = new Statusbarhealth();
+    statusBarBottle = new Statusbarbottle();
+    statusBarCoin = new Statusbarcoin();
 
 
- 
     
-
+    
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext("2d");
         this.canvas = canvas;
@@ -24,6 +25,8 @@ class World {
 
     setWorld() {
         this.character.world = this;
+
+        this.character.animate(); // ✅ HIER starten! 
 
         this.level.enemies.forEach(enemy => {
             enemy.world = this;
@@ -40,6 +43,14 @@ class World {
                 if(this.character.isColliding(enemy)) {
                     this.character.hit();
                     console.log('collision with character, energy', this.character.energy);
+                    this.statusBarHealth.setPercentage(this.character.energy);
+                    this.statusBarBottle.setPercentage(this.character.bottles * 20);
+                    this.statusBarCoin.setPercentage(this.character.coins * 20);
+ 
+                    if(enemy instanceof Endboss) {
+                        enemy.hit();
+                        console.log('collision with endboss, energy', enemy.energy);
+                    }
 
 
                 }
@@ -58,7 +69,11 @@ class World {
         this.addObjectsToMap(this.level.enemies);
 
         this.ctx.translate(-this.camera_x, 0);
-        this.addToMap(this.statusBar);
+        
+        this.addToMap(this.statusBarHealth);
+        this.addToMap(this.statusBarCoin);
+        this.addToMap(this.statusBarBottle);
+        
   
 
         // Draw wird in der draw() Funktion aufgerufen, damit es immer wieder neu gezeichnet wird

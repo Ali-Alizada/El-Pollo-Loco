@@ -47,9 +47,9 @@ class MoveableObject extends Drawableobject {
     isHurt() {
     let timepassed = new Date().getTime() - this.lastHit; // Time Derfernce in ms
     timepassed = timepassed / 1000; // Time Defernce in s
-    return timepassed < 0.8;
-        
+    return timepassed < 0.8;    
     }
+
     isDead() {
         return this.energy == 0;
     }
@@ -70,9 +70,7 @@ class MoveableObject extends Drawableobject {
     }
 
     moveLeft() {
-            this.x -= this.speed; 
-            
-         
+            this.x -= this.speed;    
     }
 
     jump() {

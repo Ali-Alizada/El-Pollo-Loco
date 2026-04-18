@@ -28,7 +28,7 @@ window.addEventListener("keydown", (event) => {
         keyboard.SPACE = true;
     }
     if(event.keyCode == 68) {
-        keybaord .D = true;
+        keyboard .D = true;
     }
 
 

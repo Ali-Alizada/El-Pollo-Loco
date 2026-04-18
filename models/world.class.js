@@ -10,9 +10,9 @@ class World {
     statusBarHealth = new Statusbarhealth();
     statusBarBottle = new Statusbarbottle();
     statusBarCoin = new Statusbarcoin();
+    coin_sound = new Audio('audio/coin.mp3');
+    bottle_sound = new Audio('audio/bottle.mp3');
 
-
-    
     
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext("2d");
@@ -26,7 +26,7 @@ class World {
     setWorld() {
         this.character.world = this;
 
-        this.character.animate(); // ✅ HIER starten! 
+        this.character.animate();
 
         this.level.enemies.forEach(enemy => {
             enemy.world = this;
@@ -44,20 +44,45 @@ class World {
                     this.character.hit();
                     console.log('collision with character, energy', this.character.energy);
                     this.statusBarHealth.setPercentage(this.character.energy);
-                    this.statusBarBottle.setPercentage(this.character.bottles * 20);
-                    this.statusBarCoin.setPercentage(this.character.coins * 20);
+                    this.coin_sound.volume = 0.2; // Sound wird hier leiser gemacht!
  
                     if(enemy instanceof Endboss) {
                         enemy.hit();
                         console.log('collision with endboss, energy', enemy.energy);
                     }
-
-
                 }
 
+            this.level.coins.forEach((coin, index) => {
+                if (this.character.isColliding(coin)) {
+
+                    this.character.coins += 1;
+                    this.statusBarCoin.setPercentage(this.character.coins * 20);
+
+                    this.coin_sound.play();
+
+                    // Entfernen aus Welt
+                    this.level.coins.splice(index, 1);
+                }
             });
-        }, 1000)
-    }
+
+
+            this.level.bottles.forEach((bottle, index) => {
+                if (this.character.isColliding(bottle)) {
+
+                    this.character.bottles += 1;
+                    this.statusBarBottle.setPercentage(this.character.bottles * 20);
+
+                    this.bottle_sound.play();
+
+                    this.level.bottles.splice(index, 1);
+                }
+            });
+
+
+
+            });
+        }, 1000 / 25 );
+     }
 
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -67,6 +92,9 @@ class World {
         this.addObjectsToMap(this.level.clouds);       
         this.addToMap(this.character);
         this.addObjectsToMap(this.level.enemies);
+        this.addObjectsToMap(this.level.bottles);
+        this.addObjectsToMap(this.level.coins);
+        
 
         this.ctx.translate(-this.camera_x, 0);
         

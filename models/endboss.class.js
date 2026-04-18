@@ -57,7 +57,7 @@ class Endboss extends MoveableObject {
 
         this.x = 2500;
 
-        // ❌ NICHT hier starten!
+   
         // this.animate();
     }
 

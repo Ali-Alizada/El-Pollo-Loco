@@ -16,9 +16,9 @@ class Statusbarcoin extends Drawableobject {
         this.loadImages(this.IMAGES_COIN);
         this.setPercentage(0);
         this.x = 10;
-        this.y = 43;
+        this.y = 46;
         this.width = 200;
-        this.height = 43;   
+        this.height = 50;  
 
     }
 

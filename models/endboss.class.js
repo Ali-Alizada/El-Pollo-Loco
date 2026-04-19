@@ -46,6 +46,9 @@ class Endboss extends MoveableObject {
     ]
   
     world;
+    deadAnimationPlayed = false;
+
+
     constructor() {
         super().loadImage(this.IMAGES_WALKING[0]);
 
@@ -56,6 +59,9 @@ class Endboss extends MoveableObject {
         this.loadImages(this.IMAGES_DEAD);
 
         this.x = 2500;
+        this.speed = 0.5;
+
+     
  
     }
 
@@ -63,36 +69,37 @@ class Endboss extends MoveableObject {
     animate() {
 
         setInterval(() => {
+        if (this.isDead()) return;
 
-            if (this.isDead()) {
-                this.playAnimation(this.IMAGES_DEAD);
-                // console.log(this.dead(), 'Endboss ist tot!');
-
-            } else if (this.isHurt()) {
-                this.playAnimation(this.IMAGES_HURT);
-                // console.log(this.isHurt(), 'Endboss ist verletzt!');
-
-            } else if (this.isAttacking()) {
-                this.playAnimation(this.IMAGES_ATTACK);
-                // console.log(this.isAttacking(), 'Endboss greift an!');
-
-                this.x -= this.speed;   // 👉 bewegt sich beim Angriff
-
-            } else if (this.isAlert()) {
-                this.playAnimation(this.IMAGES_ALERT);
-
-                this.x -= this.speed;   // 👉 läuft zum Spieler
-                // console.log(this.isAlert(), 'Endboss ist wachsam!');
-
-            } else {
-                this.playAnimation(this.IMAGES_WALKING);
-
-                this.x -= this.speed;   // 👉 normales Laufen
-                // console.log('Endboss läuft normal!');
+        if (this.isAttacking() || this.isAlert()) {
+            this.moveToCharacter();
+        } else {
+            if (this.x < 2000) {
+                this.x += this.speed;
+                this.otherDirection = true;
             }
+        }
+        }, 1000 / 25); // 🔥 60 FPS!
 
-        }, 200);
-    }
+            setInterval(() => {
+        if (this.isDead()) {
+            
+        } else if (this.isHurt()) {
+            this.playAnimation(this.IMAGES_HURT);
+
+        } else if (this.isAttacking()) {
+            this.playAnimation(this.IMAGES_ATTACK);
+
+        } else if (this.isAlert()) {
+            this.playAnimation(this.IMAGES_WALKING); // 🔥 läuft beim Verfolgen
+
+        } else {
+            this.playAnimation(this.IMAGES_WALKING); // idle/patrol
+        }
+
+    }, 200);
+
+        }
 
 
 
@@ -102,18 +109,41 @@ class Endboss extends MoveableObject {
                 return this.energy <= 0;
             }
 
-            isHurt() {
-                return this.energy < 100;
+           isHurt() {
+            let timepassed = new Date().getTime() - this.lastHit;
+            timepassed = timepassed / 1000;
+            return timepassed < 0.5; // nur 0.5 Sekunden verletzt
             }
 
+
+            distanceToCharacter() {
+            return Math.abs(this.world.character.x - this.x);
+            }
+
+
             isAlert() {
-                return this.world.character.x > this.x - 600;
+                return this.distanceToCharacter() < 600;
             }
 
             isAttacking() {
-                return this.world.character.x > this.x - 150;
+                return this.distanceToCharacter() < 150;
             }
 
 
+
+        moveToCharacter() {
+            let characterX = this.world.character.x;
+
+            if (characterX < this.x) {
+                this.x -= this.speed;
+                this.otherDirection = false;
+            } else if (characterX > this.x) {
+                this.x += this.speed;
+                this.otherDirection = true;
+            }
+        }
+
     
 }
+
+      

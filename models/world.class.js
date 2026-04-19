@@ -7,13 +7,14 @@ class World {
         ctx;
         keyboard;
         camera_x = 0;
+        gameWon = false;
         statusBarHealth = new Statusbarhealth();
         statusBarBottle = new Statusbarbottle();
         statusBarCoin = new Statusbarcoin();
         statusBarBoss = new StatusBarBoss();
 
-        // coin_sound = new Audio('audio/coin.mp3');
-        // bottle_sound = new Audio('audio/bottle.mp3');
+        coin_sound = new Audio('assets/audio/collectibles/collectSound.wav');
+        bottle_sound = new Audio('assets/audio/collectibles/bottleCollectSound.wav');
         // throw_sound = new Audio('audio/throw.mp3');
         // hit_sound = new Audio('audio/boss_hit.mp3');
         // splash_sound = new Audio('audio/splash.mp3');
@@ -35,7 +36,6 @@ class World {
         this.checkThrowObjects(); // ✅ WICHTIG
     }
 
-
         setWorld() {
             this.character.world = this;
 
@@ -49,6 +49,24 @@ class World {
                 }
         });
 
+    }
+
+    showVictoryScreen() {
+        this.gameWon = true;
+    }
+
+        
+    drawVictoryScreen() {
+
+        this.ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+        this.ctx.fillStyle = "white";
+        this.ctx.font = "50px Arial";
+        this.ctx.fillText("🏆 YOU WIN!", 220, 200);
+
+        this.ctx.font = "25px Arial";
+        this.ctx.fillText("Press F5 to restart", 250, 260);
     }
 
     checkCollisions() {
@@ -67,7 +85,7 @@ class World {
                 if (this.character.isColliding(coin)) {
                     this.character.coins++;
                     this.statusBarCoin.setPercentage(this.character.coins * 20);
-                    // this.coin_sound.play();
+                    this.coin_sound.play(); 
                     this.level.coins.splice(index, 1);
                 }
             });
@@ -77,7 +95,7 @@ class World {
                 if (this.character.isColliding(bottle)) {
                     this.character.bottles++;
                     this.statusBarBottle.setPercentage(this.character.bottles * 20);
-                    // this.bottle_sound.play();
+                    this.bottle_sound.play();
                     this.level.bottles.splice(index, 1);
                 }
             });
@@ -107,16 +125,14 @@ class World {
                 
 
             });
+
             this.splashObjects = this.splashObjects.filter(s => !s.finished);
             this.level.enemies = this.level.enemies.filter(e => !e.markedForDeletion);
-
-
 
         }, 1000 / 25 );
 
       
     }
-
 
 
     checkThrowObjects() {
@@ -158,10 +174,11 @@ class World {
         this.addToMap(this.statusBarHealth);
         this.addToMap(this.statusBarCoin);
         this.addToMap(this.statusBarBottle);
-        this.addToMap(this.statusBarBoss);
+        // this.addToMap(this.statusBarBoss);
 
-        
-  
+        if (this.character.x > 2000) {
+        this.addToMap(this.statusBarBoss);
+        }
 
         // Draw wird in der draw() Funktion aufgerufen, damit es immer wieder neu gezeichnet wird
         requestAnimationFrame(() => this.draw());
@@ -169,15 +186,32 @@ class World {
         // requestAnimationFrame(function() {
         //     self.draw();
         // });
+
+
+        
+        if(this.gameWon) {
+        this.drawVictoryScreen();   
+
+        if (this.gameWon) return;
+        }
+
+
+  
+
     }
 
     addObjectsToMap(objects) {         
         objects.forEach((object) => {
             this.addToMap(object);
         });
+
+        
     }
 
     addToMap(moveableObject) {
+       if (moveableObject.visible === true) return;
+
+
         if (moveableObject.otherDirection){
            this.flipImage(moveableObject);
         }
@@ -188,7 +222,11 @@ class World {
         if (moveableObject.otherDirection){ 
            this.flipImageBack(moveableObject);
         }
+        
     }
+
+
+
 
     flipImage(moveableObject) {
             this.ctx.save();

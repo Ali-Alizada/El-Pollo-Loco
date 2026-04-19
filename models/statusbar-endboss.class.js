@@ -10,23 +10,39 @@ class StatusBarBoss extends Drawableobject {
     ];
 
     percentage = 100;
+    isLow = false;
+    visible = false;
 
     constructor() {
         super();
         this.loadImages(this.IMAGES);
 
-        this.x = 400; // rechts oben
-        this.y = 10;
+        this.x = 500; // rechts oben
+        this.y = 56;
         this.width = 200;
-        this.height = 60;
+        this.height = 50;
 
         this.setPercentage(100);
     }
 
     setPercentage(percentage) {
         this.percentage = percentage;
+
+        if (percentage <= 20) {
+        this.isLow = true;
+        this.startBlinking();
+        }
+
         let path = this.IMAGES[this.resolveImageIndex()];
         this.img = this.imgCache[path];
+    }
+
+    startBlinking() {
+        if(this.blinkInterval) return;
+
+        this.blinkInterval = setInterval(() => {
+            this.visible = !this.visible;
+        })
     }
 
     resolveImageIndex() {

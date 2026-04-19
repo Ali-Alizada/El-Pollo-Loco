@@ -10,13 +10,17 @@ class World {
         statusBarHealth = new Statusbarhealth();
         statusBarBottle = new Statusbarbottle();
         statusBarCoin = new Statusbarcoin();
-        coin_sound = new Audio('audio/coin.mp3');
-        bottle_sound = new Audio('audio/bottle.mp3');
-        throw_sound = new Audio('audio/throw.mp3');
-        hit_sound = new Audio('audio/boss_hit.mp3');
+        // coin_sound = new Audio('audio/coin.mp3');
+        // bottle_sound = new Audio('audio/bottle.mp3');
+        // throw_sound = new Audio('audio/throw.mp3');
+        // hit_sound = new Audio('audio/boss_hit.mp3');
+        // splash_sound = new Audio('audio/splash.mp3');
+
 
 
         throwableObjects = [];
+        splashObjects = [];
+
 
         
         constructor(canvas, keyboard) {
@@ -60,7 +64,7 @@ class World {
                 if (this.character.isColliding(coin)) {
                     this.character.coins++;
                     this.statusBarCoin.setPercentage(this.character.coins * 20);
-                    this.coin_sound.play();
+                    // this.coin_sound.play();
                     this.level.coins.splice(index, 1);
                 }
             });
@@ -70,7 +74,7 @@ class World {
                 if (this.character.isColliding(bottle)) {
                     this.character.bottles++;
                     this.statusBarBottle.setPercentage(this.character.bottles * 20);
-                    this.bottle_sound.play();
+                    // this.bottle_sound.play();
                     this.level.bottles.splice(index, 1);
                 }
             });
@@ -78,17 +82,32 @@ class World {
             // 💥 Flasche trifft Endboss
             this.throwableObjects.forEach((bottle, bIndex) => {
                 this.level.enemies.forEach((enemy) => {
+
                     if (enemy instanceof Endboss && bottle.isColliding(enemy)) {
                         enemy.hit();
+
+                        // let splash = new Splash(enemy.x, enemy.y);
+                    let splash = new Splash(enemy.x + enemy.width / 15, enemy.y + enemy.height / 3);
+
+                        this.splashObjects.push(splash);
+                        // this.splash_sound.play();
+
                         console.log("Boss hit!", enemy.energy);
-                        
-                        this.hit_sound.play();
+
+                        // this.hit_sound.play();
                         this.throwableObjects.splice(bIndex, 1);
                     }
                 });
-            });
 
-        }, 1000  );
+                
+
+            });
+            this.splashObjects = this.splashObjects.filter(s => !s.finished);
+
+
+        }, 1000 / 25 );
+
+      
     }
 
 
@@ -103,7 +122,7 @@ class World {
                     this.character.otherDirection ? 'left' : 'right'
                 );
                 
-                    this.throw_sound.play();
+                    // this.throw_sound.play();
                     this.throwableObjects.push(bottle);
 
                     this.character.bottles--;
@@ -124,6 +143,7 @@ class World {
         this.addObjectsToMap(this.level.bottles);
         this.addObjectsToMap(this.level.coins);
         this.addObjectsToMap(this.throwableObjects);
+        this.addObjectsToMap(this.splashObjects);
         
 
         this.ctx.translate(-this.camera_x, 0);

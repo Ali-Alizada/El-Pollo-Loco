@@ -10,6 +10,8 @@ class World {
         statusBarHealth = new Statusbarhealth();
         statusBarBottle = new Statusbarbottle();
         statusBarCoin = new Statusbarcoin();
+        statusBarBoss = new StatusBarBoss();
+
         // coin_sound = new Audio('audio/coin.mp3');
         // bottle_sound = new Audio('audio/bottle.mp3');
         // throw_sound = new Audio('audio/throw.mp3');
@@ -42,6 +44,7 @@ class World {
             this.level.enemies.forEach(enemy => {
                 enemy.world = this;
             if (enemy instanceof Endboss) {
+                this.boss = enemy; // 👈 SPEICHERN
                 enemy.animate(); 
                 }
         });
@@ -86,6 +89,8 @@ class World {
                     if (enemy instanceof Endboss && bottle.isColliding(enemy)) {
                         enemy.hit();
 
+                    this.statusBarBoss.setPercentage(enemy.energy); // 👈 DAS IST DER KEY    
+
                         // let splash = new Splash(enemy.x, enemy.y);
                     let splash = new Splash(enemy.x + enemy.width / 15, enemy.y + enemy.height / 3);
 
@@ -103,6 +108,8 @@ class World {
 
             });
             this.splashObjects = this.splashObjects.filter(s => !s.finished);
+            this.level.enemies = this.level.enemies.filter(e => !e.markedForDeletion);
+
 
 
         }, 1000 / 25 );
@@ -151,6 +158,8 @@ class World {
         this.addToMap(this.statusBarHealth);
         this.addToMap(this.statusBarCoin);
         this.addToMap(this.statusBarBottle);
+        this.addToMap(this.statusBarBoss);
+
         
   
 

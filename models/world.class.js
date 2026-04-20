@@ -51,6 +51,13 @@ class World {
 
     }
 
+
+    isJumpingOn(enemy) {
+            return this.character.speedY < 0 && 
+            this.character.y + this.character.height < enemy.y + 20;
+    }
+
+
     showVictoryScreen() {
         this.gameWon = true;
     }
@@ -75,6 +82,14 @@ class World {
             // 🟥 Character vs Enemies
             this.level.enemies.forEach((enemy) => {
                 if (this.character.isColliding(enemy)) {
+                
+                    if (enemy instanceof Chicken && this.isJumpingOn(enemy)) {
+            
+                    enemy.die(); // 💀 Chicken stirbt
+                    
+                    this.character.speedY = 20; // 🔥 Bounce-Effekt
+
+                } else     
                     this.character.hit();
                     this.statusBarHealth.setPercentage(this.character.energy);
                 }

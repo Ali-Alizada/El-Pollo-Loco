@@ -9,6 +9,8 @@ class SmallChicken extends Chicken {
         this.width = 45;
         this.y = 370;
 
+        
+
      this.IMAGES_WALKING = [
         'img/3_enemies_chicken/chicken_small/1_walk/1_w.png',
         'img/3_enemies_chicken/chicken_small/1_walk/2_w.png',
@@ -29,6 +31,8 @@ class SmallChicken extends Chicken {
 
         this.x = 450 + Math.random() * 1000;
         this.speed = 0.2 + Math.random() * 0.3; // bisschen schneller 😈
+
+         console.log(this.IMAGES_DEAD);
     }
 
     die() {

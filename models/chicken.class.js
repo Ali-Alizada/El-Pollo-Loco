@@ -11,7 +11,10 @@ class Chicken extends MoveableObject {
     ];
 
     IMAGES_DEAD = [
-        'img/3_enemies_chicken/chicken_normal/2_dead/dead.png'
+        'img/3_enemies_chicken/chicken_normal/2_dead/dead0.png',
+        'img/3_enemies_chicken/chicken_normal/2_dead/dead1.png',
+        'img/3_enemies_chicken/chicken_normal/2_dead/dead2.png',
+       
     ];
 
     isDeadState = false;
@@ -26,6 +29,8 @@ class Chicken extends MoveableObject {
         this.loadImages(this.IMAGES_DEAD);
 
         this.animate();
+
+        console.log(this.IMAGES_DEAD);
     }
 
     animate() {

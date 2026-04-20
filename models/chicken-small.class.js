@@ -32,7 +32,7 @@ class SmallChicken extends Chicken {
         this.x = 450 + Math.random() * 1000;
         this.speed = 0.2 + Math.random() * 0.3; // bisschen schneller 😈
 
-         console.log(this.IMAGES_DEAD);
+        
     }
 
     die() {

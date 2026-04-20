@@ -52,10 +52,32 @@ class World {
     }
 
 
-    isJumpingOn(enemy) {
-            return this.character.speedY < 0 && 
-            this.character.y + this.character.height < enemy.y + 20;
+        isJumpingOn(enemy) {
+            return this.character.speedY < 0 &&
+            this.character.y + this.character.height < enemy.y + 40;
+        }
+
+
+        killNearbyChickens(hitEnemy) {
+
+        this.level.enemies.forEach((enemy) => {
+
+            if (enemy instanceof Chicken) {
+
+                let distance = Math.abs(enemy.x - hitEnemy.x);
+
+                if (distance < 80) { // 🔥 Radius anpassen!
+                    enemy.die();
+                }
+            }
+        });
+
+        setTimeout(() => {
+            this.character.speedY = 20;
+        }, 50);
+
     }
+
 
 
     showVictoryScreen() {
@@ -79,19 +101,17 @@ class World {
     checkCollisions() {
         setInterval(() => {
 
-            // 🟥 Character vs Enemies
-            this.level.enemies.forEach((enemy) => {
+                this.level.enemies.forEach((enemy) => {
                 if (this.character.isColliding(enemy)) {
-                
-                    if (enemy instanceof Chicken && this.isJumpingOn(enemy)) {
-            
-                    enemy.die(); // 💀 Chicken stirbt
-                    
-                    this.character.speedY = 20; // 🔥 Bounce-Effekt
 
-                } else     
-                    this.character.hit();
-                    this.statusBarHealth.setPercentage(this.character.energy);
+                    if (enemy instanceof Chicken && this.isJumpingOn(enemy)) {
+
+                        this.killNearbyChickens(enemy);
+
+                    } else {
+                        this.character.hit();
+                        this.statusBarHealth.setPercentage(this.character.energy);
+                    }
                 }
             });
 

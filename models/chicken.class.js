@@ -51,6 +51,8 @@ class Chicken extends MoveableObject {
         }, 200);
     }
 
+    
+
     die() {
         this.isDeadState = true;
         this.speed = 0;

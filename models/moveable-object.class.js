@@ -23,9 +23,6 @@ class MoveableObject extends Drawableobject {
     }
 
 
-
-
-
     // Kollisionserkennung mit einem anderen beweglichen Objekt -> chicken mit dem Charakter!
     isColliding(moveableObject) {
     return this.x + this.width > moveableObject.x &&

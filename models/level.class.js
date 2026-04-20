@@ -11,7 +11,7 @@ class Level {
 
         constructor(enemies, clouds, backgroundObjects, coins, bottles) {
             this.enemies = enemies;
-            this.boss = null; // 👈 INITIALISIEREN
+            // this.boss = null; // 👈 INITIALISIEREN
             this.clouds = clouds;
             this.backgroundObjects = backgroundObjects;
             this.coins = coins;

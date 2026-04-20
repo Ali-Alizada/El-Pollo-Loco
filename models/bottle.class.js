@@ -9,9 +9,9 @@ class Bottle extends MoveableObject {
         super().loadImage(this.IMAGE_BOTTLE[0]);
         this.loadImages(this.IMAGE_BOTTLE);
         this.x = x;
-        this.y = y;
-        this.width = 80;
-        this.height = 80;
+        this.y = 355;  
+        this.width = 60;
+        this.height = 60;
 
         this.animate();
     }

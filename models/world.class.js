@@ -211,7 +211,7 @@ class World {
         this.addToMap(this.statusBarBottle);
         // this.addToMap(this.statusBarBoss);
 
-        if (this.character.x > 2000) {
+        if (this.character.x > 2400) {
         this.addToMap(this.statusBarBoss);
         }
 

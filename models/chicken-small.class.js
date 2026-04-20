@@ -2,9 +2,6 @@ class SmallChicken extends Chicken {
 
     constructor() {
         super();
-
-        console.log("SmallChicken spawned"); // 👈 TEST
-
         this.height = 50;
         this.width = 45;
         this.y = 370;

@@ -28,18 +28,50 @@ class Chicken extends MoveableObject {
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_DEAD);
 
-        this.animate();
+        setTimeout(() => {
+            this.animate();
+        }, Math.random() * 1000);
 
-        console.log(this.IMAGES_DEAD);
+        this.walkRange = 300 + Math.random() * 300;
+
+        
     }
 
     animate() {
         // Bewegung
+
         this.moveInterval = setInterval(() => {
-            if (!this.isDeadState) {
+        if (this.isDeadState) return;
+        if (!this.world || !this.world.character) return;
+
+        let characterX = this.world.character.x;
+        let distance = Math.abs(characterX - this.x);
+
+        // 🔥 RANGE LOGIK HIER
+        if (distance < 400) {
+            if (distance < this.walkRange)
+
+
+            // 👉 verfolgt Spieler
+            if (characterX < this.x) {
                 this.moveLeft();
+                this.otherDirection = false;
+            } else {
+                this.moveRight();
+                this.otherDirection = true;
             }
-        }, 1000/60);
+
+        } else {
+
+            // 👉 läuft zurück nach rechts
+            this.moveRight();
+            this.otherDirection = true;
+        }
+
+    }, 1000 / 60);
+
+
+
 
         // Animation
         this.animationInterval = setInterval(() => {

@@ -2,9 +2,18 @@ class Endboss extends MoveableObject {
 
     height = 400;
     width = 280;
-    y = 55;
-    IMAGES_WALKING = [
+    y = 65;
 
+    phase = 1;
+
+    energy = 100;
+
+    world;
+
+    currentImages = 0;
+    currentState = "walk";
+
+    IMAGES_WALKING = [
         'img/4_enemie_boss_chicken/1_walk/G1.png',
         'img/4_enemie_boss_chicken/1_walk/G2.png',
         'img/4_enemie_boss_chicken/1_walk/G3.png',
@@ -37,17 +46,13 @@ class Endboss extends MoveableObject {
         'img/4_enemie_boss_chicken/4_hurt/G21.png',
         'img/4_enemie_boss_chicken/4_hurt/G22.png',
         'img/4_enemie_boss_chicken/4_hurt/G23.png'
-    ]
-        
+    ];
+
     IMAGES_DEAD = [
         'img/4_enemie_boss_chicken/5_dead/G24.png',
         'img/4_enemie_boss_chicken/5_dead/G25.png',
         'img/4_enemie_boss_chicken/5_dead/G26.png'
-    ]
-  
-    world;
-    deadAnimationPlayed = false;
-
+    ];
 
     constructor() {
         super().loadImage(this.IMAGES_WALKING[0]);
@@ -58,92 +63,145 @@ class Endboss extends MoveableObject {
         this.loadImages(this.IMAGES_HURT);
         this.loadImages(this.IMAGES_DEAD);
 
-        this.x = 2500;
-        this.speed = 0.5;
+        this.x = 2900;
+        this.startX = this.x;
 
-     
- 
+        this.speed = 2;
+        this.otherDirection = true;
+
+        this.currentState = "walk";
+        // ❌ KEIN animate hier!
     }
 
 
+    // =========================
+    // MAIN LOOP
+    // =========================
+
     animate() {
 
+        // 🏃 Movement (sauber 1 Loop)
         setInterval(() => {
-        if (this.isDead()) return;
 
-        if (this.isAttacking() || this.isAlert()) {
-            this.moveToCharacter();
-        } else {
-            if (this.x < 2000) {
-                this.x += this.speed;
-                this.otherDirection = true;
-            }
-        }
-        }, 1000 / 25); // 🔥 60 FPS!
+            if (this.isDead()) return;
 
-            setInterval(() => {
-        if (this.isDead()) {
-            
-        } else if (this.isHurt()) {
-            this.playAnimation(this.IMAGES_HURT);
+            this.checkPhase();
 
-        } else if (this.isAttacking()) {
-            this.playAnimation(this.IMAGES_ATTACK);
-
-        } else if (this.isAlert()) {
-            this.playAnimation(this.IMAGES_WALKING); // 🔥 läuft beim Verfolgen
-
-        } else {
-            this.playAnimation(this.IMAGES_WALKING); // idle/patrol
-        }
-
-    }, 200);
-
-        }
-
-
-
-        energy = 100;
-
-            isDead() {
-                return this.energy <= 0;
-            }
-
-           isHurt() {
-            let timepassed = new Date().getTime() - this.lastHit;
-            timepassed = timepassed / 1000;
-            return timepassed < 0.5; // nur 0.5 Sekunden verletzt
-            }
-
-
-            distanceToCharacter() {
-            return Math.abs(this.world.character.x - this.x);
-            }
-
-
-            isAlert() {
-                return this.distanceToCharacter() < 600;
-            }
-
-            isAttacking() {
-                return this.distanceToCharacter() < 150;
-            }
-
-
-
-        moveToCharacter() {
             let characterX = this.world.character.x;
+            let distance = this.distanceToCharacter();
 
-            if (characterX < this.x) {
-                this.x -= this.speed;
-                this.otherDirection = false;
-            } else if (characterX > this.x) {
-                this.x += this.speed;
-                this.otherDirection = true;
+            let alertRange = this.alertRange || 600;
+
+            if (distance < alertRange) {
+
+                // 👉 CHASE PLAYER
+                if (characterX < this.x) {
+                    this.moveLeft();
+                    this.otherDirection = false;
+                } else {
+                    this.moveRight();
+                    this.otherDirection = true;
+                }
+
+            } else {
+
+                // 👉 RETURN HOME (nach rechts)
+                if (this.x < this.startX) {
+                    this.moveRight();
+                    this.otherDirection = true;
+                }
             }
+
+        }, 1000 / 60);
+
+
+        // 🎬 Animation Loop
+        setInterval(() => {
+
+            if (this.isDead()) {
+                this.playAnimation(this.IMAGES_DEAD);
+                return;
+            }
+
+            let newState = "";
+
+            if (this.isHurt()) {
+                newState = "hurt";
+
+            } else if (this.isAttacking()) {
+                newState = "attack";
+
+            } else if (this.distanceToCharacter() < (this.alertRange || 600)) {
+                newState = "walk";
+
+            } else {
+                newState = "idle";
+            }
+
+            // 🔥 reset animation only on state change
+            if (this.currentState !== newState) {
+                this.currentImages = 0;
+                this.currentState = newState;
+            }
+
+            switch (newState) {
+                case "hurt":
+                    this.playAnimation(this.IMAGES_HURT);
+                    break;
+
+                case "attack":
+                    this.playAnimation(this.IMAGES_ATTACK);
+                    break;
+
+                case "walk":
+                    this.playAnimation(this.IMAGES_WALKING);
+                    break;
+
+                case "idle":
+                    this.playAnimation(this.IMAGES_ALERT);
+                    break;
+            }
+
+        }, 150);
+    }
+
+    // =========================
+    // PHASE SYSTEM
+    // =========================
+
+    checkPhase() {
+        if (this.energy < 30 && this.phase === 1) {
+            this.enterPhase2();
         }
+    }
 
-    
+    enterPhase2() {
+        this.phase = 2;
+
+        this.speed = 3;        // 🔥 schneller
+        this.alertRange = 800; // 🔥 sieht weiter
+
+        console.log("🔥 PHASE 2 ACTIVE");
+    }
+
+    // =========================
+    // LOGIC
+    // =========================
+
+    distanceToCharacter() {
+        return Math.abs(this.world.character.x - this.x);
+    }
+
+    isAttacking() {
+        return this.distanceToCharacter() < (this.attackRange || 250);
+    }
+
+    isHurt() {
+        let timepassed = new Date().getTime() - this.lastHit;
+        return timepassed / 1000 < 0.5;
+    }
+
+    isDead() {
+        return this.energy <= 0;
+    }
 }
-
-      

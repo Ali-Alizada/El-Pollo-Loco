@@ -25,6 +25,7 @@ class SmallChicken extends Chicken {
 
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_DEAD);
+        
 
         this.x = 450 + Math.random() * 1000;
         this.speed = 0.2 + Math.random() * 0.3; // bisschen schneller 😈
@@ -33,12 +34,24 @@ class SmallChicken extends Chicken {
     }
 
     die() {
-    this.isDeadState = true;
-    this.speed = 0;
+        this.isDeadState = true;
+        this.speed = 0;
 
-    setTimeout(() => {
-        this.markedForDeletion = true;
-    }, 1000);
-}
+        // 🔥 Flaschen droppen
+        if (this.world) {
+            for (let i = 0; i < 2; i++) { // 🔥 Anzahl hier ändern
+                this.world.spawnBottle(
+                    this.x + Math.random() * 500,
+                    this.y
+                    
+                );
+            }
+        }
+
+        setTimeout(() => {
+            this.markedForDeletion = true;
+        }, 1000);
+    }
+
 
 }

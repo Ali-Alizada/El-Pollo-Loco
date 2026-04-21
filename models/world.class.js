@@ -13,19 +13,16 @@ class World {
         statusBarCoin = new Statusbarcoin();
         statusBarBoss = new StatusBarBoss();
 
-        coin_sound = new Audio('assets/audio/collectibles/collectSound.wav');
-        bottle_sound = new Audio('assets/audio/collectibles/bottleCollectSound.wav');
-        // throw_sound = new Audio('audio/throw.mp3');
-        // hit_sound = new Audio('audio/boss_hit.mp3');
-        // splash_sound = new Audio('audio/splash.mp3');
+    
 
+
+
+        
 
 
         throwableObjects = [];
         splashObjects = [];
 
-
-        
         constructor(canvas, keyboard) {
         this.ctx = canvas.getContext("2d");
         this.canvas = canvas;
@@ -34,6 +31,14 @@ class World {
         this.setWorld();
         this.checkCollisions();
         this.checkThrowObjects(); // ✅ WICHTIG
+        this.sound = new SoundManager();
+        
+        // this.sound = new SoundManager();
+        // this.sound.sounds.jump.volume = 0.5;
+
+
+
+
     }
 
         setWorld() {
@@ -55,19 +60,31 @@ class World {
         isJumpingOn(enemy) {
             return this.character.speedY < 0 &&
             this.character.y + this.character.height < enemy.y + 40;
+
+
+            
+
         }
 
 
         killNearbyChickens(hitEnemy) {
+        
+            this.level.enemies.forEach((enemy) => {
 
-        this.level.enemies.forEach((enemy) => {
-
-            if (enemy instanceof Chicken) {
+                if (enemy instanceof Chicken) {
+                
+                if (enemy instanceof SmallChicken) {
+                    this.sound.play('smallChicken');
+                } else {
+                    this.sound.play('chicken');
+                }
 
                 let distance = Math.abs(enemy.x - hitEnemy.x);
 
                 if (distance < 80) { // 🔥 Radius anpassen!
                     enemy.die();
+                   
+
                 }
             }
         });
@@ -78,6 +95,10 @@ class World {
 
     }
 
+    spawnBottle(x, y) {
+    let bottle = new Bottle(x, y);
+    this.level.bottles.push(bottle);
+}
 
 
     showVictoryScreen() {
@@ -105,22 +126,32 @@ class World {
                 if (this.character.isColliding(enemy)) {
 
                     if (enemy instanceof Chicken && this.isJumpingOn(enemy)) {
-
-                        this.killNearbyChickens(enemy);
-
-                    } else {
+                        this.killNearbyChickens(enemy);  
+                        
+                             
+                    } 
+                    
+                    else {
                         this.character.hit();
-                        this.statusBarHealth.setPercentage(this.character.energy);
+                        this.sound.play('hit'); 
+                        this.statusBarHealth.setPercentage(this.character.energy);    
                     }
-                }
+                }               
             });
 
             // 🟡 Coins sammeln
             this.level.coins.forEach((coin, index) => {
                 if (this.character.isColliding(coin)) {
                     this.character.coins++;
-                    this.statusBarCoin.setPercentage(this.character.coins * 20);
-                    this.coin_sound.play(); 
+                    
+                    let percent = this.character.coins * 20;
+                    percent = Math.min(percent, 100);
+
+                    this.statusBarCoin.setPercentage(percent);
+                    this.sound.play('coin');
+
+
+
                     this.level.coins.splice(index, 1);
                 }
             });
@@ -129,8 +160,13 @@ class World {
             this.level.bottles.forEach((bottle, index) => {
                 if (this.character.isColliding(bottle)) {
                     this.character.bottles++;
-                    this.statusBarBottle.setPercentage(this.character.bottles * 20);
-                    this.bottle_sound.play();
+
+                    let percent = this.character.bottles * 20;
+                    percent = Math.min(percent, 100);
+                    this.statusBarBottle.setPercentage(percent);
+                    this.sound.play('bottle');
+
+
                     this.level.bottles.splice(index, 1);
                 }
             });
@@ -148,11 +184,10 @@ class World {
                     let splash = new Splash(enemy.x + enemy.width / 15, enemy.y + enemy.height / 3);
 
                         this.splashObjects.push(splash);
-                        // this.splash_sound.play();
 
                         console.log("Boss hit!", enemy.energy);
-
-                        // this.hit_sound.play();
+                        this.sound.play('bossHit');
+                        
                         this.throwableObjects.splice(bIndex, 1);
                     }
                 });
@@ -164,7 +199,7 @@ class World {
             this.splashObjects = this.splashObjects.filter(s => !s.finished);
             this.level.enemies = this.level.enemies.filter(e => !e.markedForDeletion);
 
-        }, 1000 / 25 );
+        }, 1000 / 15 );
 
       
     }
@@ -180,9 +215,8 @@ class World {
                     this.character.otherDirection ? 'left' : 'right'
                 );
                 
-                    // this.throw_sound.play();
                     this.throwableObjects.push(bottle);
-
+                
                     this.character.bottles--;
                     this.statusBarBottle.setPercentage(this.character.bottles * 20);
                 }

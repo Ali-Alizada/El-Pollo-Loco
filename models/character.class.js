@@ -9,6 +9,9 @@ class Character extends MoveableObject {
     coins = 0;
     bottles = 0;
 
+    lastHitTime = 0;
+    hitCooldown = 300; // 1 Sekunde Pause
+
     IMAGES_WALKING = [
             'img/2_character_pepe/2_walk/W-21.png',
             'img/2_character_pepe/2_walk/W-22.png',
@@ -104,8 +107,29 @@ class Character extends MoveableObject {
         }, 50);
     }
 
-        jump() {
-            this.speedY = 30;
-            
+
+        hit() {
+    let now = new Date().getTime();
+
+    if (now - this.lastHitTime > this.hitCooldown) {
+        this.energy -= 10;
+
+        if (this.energy < 0) {
+            this.energy = 0;
         }
+
+        this.lastHitTime = now;
+        this.lastHit = now;
+    }
+}
+
+
+    jump() {
+    this.speedY = 30;
+    if (this.world) {
+        this.world.sound.play('jump');
+    }
+    }
+
+
 }

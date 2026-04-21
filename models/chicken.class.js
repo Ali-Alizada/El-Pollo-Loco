@@ -18,6 +18,12 @@ class Chicken extends MoveableObject {
     ];
 
     isDeadState = false;
+    isPanicking = false;
+    panicEndTime = 0;
+    isPanickingFromBoss = false;
+    bossPanicEnd = 0;
+
+
 
     constructor() {     
         super().loadImage(this.IMAGES_WALKING[0]);
@@ -40,19 +46,77 @@ class Chicken extends MoveableObject {
     animate() {
         // Bewegung
 
-        this.moveInterval = setInterval(() => {
+    this.moveInterval = setInterval(() => {
         if (this.isDeadState) return;
         if (!this.world || !this.world.character) return;
 
-        let characterX = this.world.character.x;
+        let character = this.world.character;
+        let boss = this.world.boss;
+
+        let characterX = character.x;
         let distance = Math.abs(characterX - this.x);
 
-        // 🔥 RANGE LOGIK HIER
-        if (distance < 400) {
-            if (distance < this.walkRange)
+        // =========================
+        // 🐔 PANIK VOR BOSS
+        // =========================
+        if (boss) {
+            let bossDistance = Math.abs(boss.x - this.x);
 
+            if (bossDistance < 300) {
+                this.isPanickingFromBoss = true;
+                this.bossPanicEnd = Date.now() + 1500;
+            }
+        }
 
-            // 👉 verfolgt Spieler
+        if (this.isPanickingFromBoss && Date.now() > this.bossPanicEnd) {
+            this.isPanickingFromBoss = false;
+        }
+
+        if (this.isPanickingFromBoss) {
+            let bossX = boss.x;
+            let panicSpeed = this.speed * 2.5;
+
+            if (bossX < this.x) {
+                this.x += panicSpeed; // 👉 weg nach rechts
+                this.otherDirection = true;
+            } else {
+                this.x -= panicSpeed; // 👉 weg nach links
+                this.otherDirection = false;
+            }
+
+            return;
+        }
+
+        // =========================
+        // 🧍 PANIK VOR PLAYER (optional)
+        // =========================
+        if (character.speedY > 5) {
+            this.isPanicking = true;
+            this.panicEndTime = Date.now() + 1000;
+        }
+
+        if (this.isPanicking && Date.now() > this.panicEndTime) {
+            this.isPanicking = false;
+        }
+
+        if (this.isPanicking) {
+            let panicSpeed = this.speed * 2;
+
+            if (characterX < this.x) {
+                this.x += panicSpeed;
+                this.otherDirection = true;
+            } else {
+                this.x -= panicSpeed;
+                this.otherDirection = false;
+            }
+
+            return;
+        }
+
+        // =========================
+        // 🚶 NORMAL
+        // =========================
+        if (distance < this.walkRange) {
             if (characterX < this.x) {
                 this.moveLeft();
                 this.otherDirection = false;
@@ -60,10 +124,7 @@ class Chicken extends MoveableObject {
                 this.moveRight();
                 this.otherDirection = true;
             }
-
         } else {
-
-            // 👉 läuft zurück nach rechts
             this.moveRight();
             this.otherDirection = true;
         }

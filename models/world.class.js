@@ -7,17 +7,11 @@ class World {
         ctx;
         keyboard;
         camera_x = 0;
-        gameWon = false;
+        gameState = 'running'; // running | win | lose
         statusBarHealth = new Statusbarhealth();
         statusBarBottle = new Statusbarbottle();
         statusBarCoin = new Statusbarcoin();
         statusBarBoss = new StatusBarBoss();
-
-    
-
-
-
-        
 
 
         throwableObjects = [];
@@ -32,11 +26,6 @@ class World {
         this.checkCollisions();
         this.checkThrowObjects(); // ✅ WICHTIG
         this.sound = new SoundManager();
-        
-        // this.sound = new SoundManager();
-        // this.sound.sounds.jump.volume = 0.5;
-
-
 
 
     }
@@ -60,10 +49,6 @@ class World {
         isJumpingOn(enemy) {
             return this.character.speedY < 0 &&
             this.character.y + this.character.height < enemy.y + 40;
-
-
-            
-
         }
 
 
@@ -95,41 +80,46 @@ class World {
 
     }
 
-    spawnBottle(x, y) {
-    let bottle = new Bottle(x, y);
-    this.level.bottles.push(bottle);
-}
-
-
-    showVictoryScreen() {
-        this.gameWon = true;
+        spawnBottle(x, y) {
+        let bottle = new Bottle(x, y);
+        this.level.bottles.push(bottle);
     }
+
+
+    // showVictoryScreen() {
+    //     this.gameWon = true;
+    // }
 
         
-    drawVictoryScreen() {
+    // drawVictoryScreen() {
 
-        this.ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    //     this.ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+    //     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        this.ctx.fillStyle = "white";
-        this.ctx.font = "50px Arial";
-        this.ctx.fillText("🏆 YOU WIN!", 220, 200);
+    //     this.ctx.fillStyle = "white";
+    //     this.ctx.font = "50px Arial";
+    //     this.ctx.fillText("🏆 YOU WIN!", 220, 200);
 
-        this.ctx.font = "25px Arial";
-        this.ctx.fillText("Press F5 to restart", 250, 260);
-    }
+    //     this.ctx.font = "25px Arial";
+    //     this.ctx.fillText("Press F5 to restart", 250, 260);
+    // }
 
     checkCollisions() {
         setInterval(() => {
+
+                if (this.gameState !== 'running') return;
 
                 this.level.enemies.forEach((enemy) => {
                 if (this.character.isColliding(enemy)) {
 
                     if (enemy instanceof Chicken && this.isJumpingOn(enemy)) {
                         this.killNearbyChickens(enemy);  
-                        
-                             
                     } 
+
+                    if (this.character.energy <= 0) {
+                        this.gameState = 'lose';
+                    }
+
                     
                     else {
                         this.character.hit();
@@ -178,12 +168,18 @@ class World {
                     if (enemy instanceof Endboss && bottle.isColliding(enemy)) {
                         enemy.hit();
 
+                    if (enemy instanceof Endboss && enemy.energy <= 0) {
+                    this.gameState = 'win';
+                    }
+
+
                     this.statusBarBoss.setPercentage(enemy.energy); // 👈 DAS IST DER KEY    
 
                         // let splash = new Splash(enemy.x, enemy.y);
                     let splash = new Splash(enemy.x + enemy.width / 15, enemy.y + enemy.height / 3);
 
                         this.splashObjects.push(splash);
+                         this.sound.play('splash');
 
                         console.log("Boss hit!", enemy.energy);
                         this.sound.play('bossHit');
@@ -207,6 +203,9 @@ class World {
 
     checkThrowObjects() {
         setInterval(() => {
+            if (this.gameState !== 'running') return;
+
+
             if (this.keyboard.D && this.character.bottles > 0) {
 
                 let bottle = new ThrowableObject(
@@ -225,6 +224,18 @@ class World {
 
 
     draw() {
+
+        if (this.gameState === 'win') {
+            this.drawWinScreen();
+            return;
+        }
+
+        if (this.gameState === 'lose') {
+            this.drawLoseScreen();
+            return;
+        }
+
+
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.translate(this.camera_x, 0);
  
@@ -245,7 +256,7 @@ class World {
         this.addToMap(this.statusBarBottle);
         // this.addToMap(this.statusBarBoss);
 
-        if (this.character.x > 2400) {
+        if (this.character.x > 2000) {
         this.addToMap(this.statusBarBoss);
         }
 
@@ -255,19 +266,29 @@ class World {
         // requestAnimationFrame(function() {
         //     self.draw();
         // });
-
-
-        
-        if(this.gameWon) {
-        this.drawVictoryScreen();   
-
-        if (this.gameWon) return;
-        }
-
-
-  
-
     }
+
+
+        drawWinScreen() {
+        this.ctx.fillStyle = "rgba(0,0,0,0.7)";
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+        this.ctx.fillStyle = "white";
+        this.ctx.font = "50px Arial";
+        this.ctx.fillText("🏆 YOU WIN!", 220, 200);
+    }
+
+
+        drawLoseScreen() {
+        this.ctx.fillStyle = "rgba(0,0,0,0.7)";
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+        this.ctx.fillStyle = "white";
+        this.ctx.font = "50px Arial";
+        this.ctx.fillText("💀 GAME OVER", 200, 200);
+    }
+
+
 
     addObjectsToMap(objects) {         
         objects.forEach((object) => {

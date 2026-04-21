@@ -7,6 +7,7 @@ class World {
         ctx;
         keyboard;
         camera_x = 0;
+        images;
         gameState = 'running'; // running | win | lose
         statusBarHealth = new Statusbarhealth();
         statusBarBottle = new Statusbarbottle();
@@ -21,12 +22,14 @@ class World {
         this.ctx = canvas.getContext("2d");
         this.canvas = canvas;
         this.keyboard = keyboard;
+
+        this.images = new ImageManager(); 
+
         this.draw();
         this.setWorld();
         this.checkCollisions();
-        this.checkThrowObjects(); // ✅ WICHTIG
+        this.checkThrowObjects(); 
         this.sound = new SoundManager();
-
 
     }
 
@@ -78,31 +81,20 @@ class World {
             this.character.speedY = 20;
         }, 50);
 
-    }
+       }
 
         spawnBottle(x, y) {
         let bottle = new Bottle(x, y);
         this.level.bottles.push(bottle);
-    }
+        }
+
+        stopAllSounds() {
+        this.sound.stop('snoring');
+        this.sound.stop('walking');
+        }   
 
 
-    // showVictoryScreen() {
-    //     this.gameWon = true;
-    // }
 
-        
-    // drawVictoryScreen() {
-
-    //     this.ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
-    //     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-    //     this.ctx.fillStyle = "white";
-    //     this.ctx.font = "50px Arial";
-    //     this.ctx.fillText("🏆 YOU WIN!", 220, 200);
-
-    //     this.ctx.font = "25px Arial";
-    //     this.ctx.fillText("Press F5 to restart", 250, 260);
-    // }
 
     checkCollisions() {
         setInterval(() => {
@@ -118,8 +110,8 @@ class World {
 
                     if (this.character.energy <= 0) {
                         this.gameState = 'lose';
+                        this.stopAllSounds(); // 🔥 HIER
                     }
-
                     
                     else {
                         this.character.hit();
@@ -170,6 +162,7 @@ class World {
 
                     if (enemy instanceof Endboss && enemy.energy <= 0) {
                     this.gameState = 'win';
+                    this.stopAllSounds(); // 🔥 HIER
                     }
 
 
@@ -188,18 +181,13 @@ class World {
                     }
                 });
 
-                
-
             });
 
             this.splashObjects = this.splashObjects.filter(s => !s.finished);
             this.level.enemies = this.level.enemies.filter(e => !e.markedForDeletion);
 
         }, 1000 / 15 );
-
-      
     }
-
 
     checkThrowObjects() {
         setInterval(() => {
@@ -223,111 +211,100 @@ class World {
     }
 
 
-    draw() {
+        draw() {
 
-        if (this.gameState === 'win') {
-            this.drawWinScreen();
-            return;
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+            // 👉 IMMER Hintergrund zeichnen
+            this.ctx.translate(this.camera_x, 0);
+
+            this.addObjectsToMap(this.level.backgroundObjects);
+            this.addObjectsToMap(this.level.clouds);
+
+            this.ctx.translate(-this.camera_x, 0);
+
+            // 👉 Wenn Game vorbei → STOP hier
+            if (this.gameState === 'win') {
+                this.drawWinScreen();
+                return;
+            }
+
+            if (this.gameState === 'lose') {
+                this.drawLoseScreen();
+                return;
+            }
+
+            // 👉 Nur wenn running → Rest zeichnen
+            this.ctx.translate(this.camera_x, 0);
+
+            this.addToMap(this.character);
+            this.addObjectsToMap(this.level.enemies);
+            this.addObjectsToMap(this.level.bottles);
+            this.addObjectsToMap(this.level.coins);
+            this.addObjectsToMap(this.throwableObjects);
+            this.addObjectsToMap(this.splashObjects);
+
+            this.ctx.translate(-this.camera_x, 0);
+
+            this.addToMap(this.statusBarHealth);
+            this.addToMap(this.statusBarCoin);
+            this.addToMap(this.statusBarBottle);
+
+            if (this.character.x > 2000) {
+                this.addToMap(this.statusBarBoss);
+            }
+
+            requestAnimationFrame(() => this.draw());
         }
-
-        if (this.gameState === 'lose') {
-            this.drawLoseScreen();
-            return;
-        }
-
-
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.ctx.translate(this.camera_x, 0);
- 
-        this.addObjectsToMap(this.level.backgroundObjects);
-        this.addObjectsToMap(this.level.clouds);       
-        this.addToMap(this.character);
-        this.addObjectsToMap(this.level.enemies);
-        this.addObjectsToMap(this.level.bottles);
-        this.addObjectsToMap(this.level.coins);
-        this.addObjectsToMap(this.throwableObjects);
-        this.addObjectsToMap(this.splashObjects);
-        
-
-        this.ctx.translate(-this.camera_x, 0);
-        
-        this.addToMap(this.statusBarHealth);
-        this.addToMap(this.statusBarCoin);
-        this.addToMap(this.statusBarBottle);
-        // this.addToMap(this.statusBarBoss);
-
-        if (this.character.x > 2000) {
-        this.addToMap(this.statusBarBoss);
-        }
-
-        // Draw wird in der draw() Funktion aufgerufen, damit es immer wieder neu gezeichnet wird
-        requestAnimationFrame(() => this.draw());
-        // let self = this;
-        // requestAnimationFrame(function() {
-        //     self.draw();
-        // });
-    }
 
 
         drawWinScreen() {
-        this.ctx.fillStyle = "rgba(0,0,0,0.7)";
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            this.ctx.fillStyle = "rgba(0,0,0,0.4)";
+            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        this.ctx.fillStyle = "white";
-        this.ctx.font = "50px Arial";
-        this.ctx.fillText("🏆 YOU WIN!", 220, 200);
-    }
-
+            this.ctx.drawImage(this.images.get('win'), 150, 80, 500, 300);
+        }
 
         drawLoseScreen() {
-        this.ctx.fillStyle = "rgba(0,0,0,0.7)";
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            this.ctx.fillStyle = "rgba(0,0,0,0.6)";
+            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        this.ctx.fillStyle = "white";
-        this.ctx.font = "50px Arial";
-        this.ctx.fillText("💀 GAME OVER", 200, 200);
-    }
-
-
-
-    addObjectsToMap(objects) {         
-        objects.forEach((object) => {
-            this.addToMap(object);
-        });
-
-        
-    }
-
-    addToMap(moveableObject) {
-       if (moveableObject.visible === true) return;
-
-
-        if (moveableObject.otherDirection){
-           this.flipImage(moveableObject);
+            this.ctx.drawImage(this.images.get('lose'),150,80,500,300);
         }
 
-            moveableObject.draw(this.ctx);
-            moveableObject.drawFrame(this.ctx);
+        addObjectsToMap(objects) {         
+            objects.forEach((object) => {
+                this.addToMap(object);
+            });
 
-        if (moveableObject.otherDirection){ 
-           this.flipImageBack(moveableObject);
+            
         }
-        
-    }
 
+        addToMap(moveableObject) {
+        if (moveableObject.visible === true) return;
 
+            if (moveableObject.otherDirection){
+            this.flipImage(moveableObject);
+            }
+                moveableObject.draw(this.ctx);
+                moveableObject.drawFrame(this.ctx);
 
+            if (moveableObject.otherDirection){ 
+            this.flipImageBack(moveableObject);
+            }
+            
+        }
 
-    flipImage(moveableObject) {
-            this.ctx.save();
-            this.ctx.translate(moveableObject.width, 0)
-            this.ctx.scale(-1,1)
-            moveableObject.x = moveableObject.x * -1;
-    }
+        flipImage(moveableObject) {
+                this.ctx.save();
+                this.ctx.translate(moveableObject.width, 0)
+                this.ctx.scale(-1,1)
+                moveableObject.x = moveableObject.x * -1;
+        }
 
-    flipImageBack(moveableObject) {
-            moveableObject.x = moveableObject.x * -1;
-            this.ctx.restore();
-    }
+        flipImageBack(moveableObject) {
+                moveableObject.x = moveableObject.x * -1;
+                this.ctx.restore();
+        }
     
 }

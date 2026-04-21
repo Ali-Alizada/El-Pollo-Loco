@@ -92,6 +92,12 @@ class Character extends MoveableObject {
 
             setInterval(() => {
 
+                if (this.world.gameState !== 'running') {
+                    this.world.sound.stop('snoring');
+                    this.world.sound.stop('walking');
+                    return;
+                }
+
                 if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
                 this.moveRight();
                 this.otherDirection = false;

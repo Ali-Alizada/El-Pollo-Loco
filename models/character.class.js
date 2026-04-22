@@ -10,6 +10,8 @@ class Character extends MoveableObject {
     hitCooldown = 300; // 0.3 Sekunde Pause
     walkingSoundPlaying = false;
     snoringSoundPlaying = false;
+    deadSoundPlayed = false;
+
 
     IMAGES_IDLE = [
         'img/2_character_pepe/1_idle/idle/I-1.png',
@@ -92,51 +94,58 @@ class Character extends MoveableObject {
 
             setInterval(() => {
 
-                if (this.world.gameState !== 'running') {
-                    this.world.sound.stop('snoring');
-                    this.world.sound.stop('walking');
-                    return;
-                }
+            if (this.world.gameState !== 'running') {
+                this.world.sound.stop('snoring');
+                this.world.sound.stop('walking');
+                return;
+            }
 
-                if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+            // 👉 Bewegung
+            if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
                 this.moveRight();
                 this.otherDirection = false;
                 this.lastMoveTime = new Date().getTime();
 
-                if (!this.walkingSoundPlaying) {
-                    this.world.sound.loop('walking');
-                    this.walkingSoundPlaying = true;
-                }
-
-                } else if (this.world.keyboard.LEFT && this.x > 0) {
+            } else if (this.world.keyboard.LEFT && this.x > 0) {
                 this.moveLeft();
                 this.otherDirection = true;
                 this.lastMoveTime = new Date().getTime();
+            }
 
+            // 👉 Walking Sound (GETRENNT!)
+            if (
+                (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) &&
+                !this.isAboveGround()
+            ) {
                 if (!this.walkingSoundPlaying) {
                     this.world.sound.loop('walking');
                     this.walkingSoundPlaying = true;
                 }
-
-                } else {
+            } else {
                 this.world.sound.stop('walking');
                 this.walkingSoundPlaying = false;
-                }
+            }
 
-                 if (this.world.keyboard.SPACE && !this.isAboveGround()) {
+            // 👉 Jump
+            if (this.world.keyboard.SPACE && !this.isAboveGround()) {
                 this.jump();
                 this.lastMoveTime = new Date().getTime();
-                }
+            }
 
-                this.world.camera_x = -this.x + 100;
+            // 👉 Kamera
+            this.world.camera_x = -this.x + 100;
 
-             }, 1000 / 60);
-
+        }, 1000 / 60);
 
         setInterval(() => {
 
             if (this.isDead()) {
                 this.playAnimation(this.IMAGES_DEAD);
+
+                if (!this.deadSoundPlayed) {
+                this.world.sound.play('characterDead');
+                this.deadSoundPlayed = true;
+            }
                 return;
             }
 

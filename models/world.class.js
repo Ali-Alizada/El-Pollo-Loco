@@ -8,13 +8,13 @@ class World {
         keyboard;
         camera_x = 0;
         images;
+        loseSoundPlayed = false;
+        winSoundPlayed = false;
         gameState = 'running'; // running | win | lose
         statusBarHealth = new Statusbarhealth();
         statusBarBottle = new Statusbarbottle();
         statusBarCoin = new Statusbarcoin();
         statusBarBoss = new StatusBarBoss();
-
-
         throwableObjects = [];
         splashObjects = [];
 
@@ -30,6 +30,8 @@ class World {
         this.checkCollisions();
         this.checkThrowObjects(); 
         this.sound = new SoundManager();
+        this.sound.loop('bgMusic');
+
 
     }
 
@@ -62,10 +64,12 @@ class World {
                 if (enemy instanceof Chicken) {
                 
                 if (enemy instanceof SmallChicken) {
-                    this.sound.play('smallChicken');
-                } else {
+                    // this.sound.play('smallChicken');
                     this.sound.play('chicken');
-                }
+                } 
+                // else {
+                //     this.sound.play('chicken');
+                // }
 
                 let distance = Math.abs(enemy.x - hitEnemy.x);
 
@@ -91,7 +95,9 @@ class World {
         stopAllSounds() {
         this.sound.stop('snoring');
         this.sound.stop('walking');
-        }   
+        this.sound.stop('bgMusic'); // 🔥 NEU
+    }
+ 
 
 
 
@@ -111,6 +117,14 @@ class World {
                     if (this.character.energy <= 0) {
                         this.gameState = 'lose';
                         this.stopAllSounds(); // 🔥 HIER
+
+
+                        if (!this.loseSoundPlayed) {
+                        setTimeout(() => {
+                            this.sound.play('gameOver');
+                        }, 100);
+                        this.loseSoundPlayed = true;
+                    }
                     }
                     
                     else {
@@ -163,6 +177,16 @@ class World {
                     if (enemy instanceof Endboss && enemy.energy <= 0) {
                     this.gameState = 'win';
                     this.stopAllSounds(); // 🔥 HIER
+
+                    if (!this.winSoundPlayed) {
+                    setTimeout(() => {
+                    this.sound.play('win');
+                    }, 100);
+
+                    this.winSoundPlayed = true;
+
+                    }
+
                     }
 
 
@@ -234,6 +258,7 @@ class World {
                 return;
             }
 
+
             // 👉 Nur wenn running → Rest zeichnen
             this.ctx.translate(this.camera_x, 0);
 
@@ -259,14 +284,14 @@ class World {
 
 
         drawWinScreen() {
-            this.ctx.fillStyle = "rgba(0,0,0,0.4)";
+            this.ctx.fillStyle = "rgba(0,0,0,0.1)";
             this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
             this.ctx.drawImage(this.images.get('win'), 150, 80, 500, 300);
         }
 
         drawLoseScreen() {
-            this.ctx.fillStyle = "rgba(0,0,0,0.6)";
+            this.ctx.fillStyle = "rgba(0,0,0,0.1)";
             this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
             this.ctx.drawImage(this.images.get('lose'),150,80,500,300);

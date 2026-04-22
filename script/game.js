@@ -6,8 +6,13 @@ function init() {
     canvas = document.getElementById("canvas");
     world = new World(canvas, keyboard);
 
-    console.log('My Character', world.character);
-    
+    if (this.gameState === 'running') {
+    world.sound.loop('bgMusic');
+    }
+
+    if (this.gameState !== 'running') {
+    world.sound.stop('bgMusic');
+    }
 
 }
     
@@ -56,3 +61,12 @@ window.addEventListener("keyup", (event) => {
     }
 
 });
+
+window.addEventListener('keydown', () => {
+    if (!world.musicStarted) {
+        world.sound.loop('bgMusic');
+        world.musicStarted = true;
+    }
+});
+
+

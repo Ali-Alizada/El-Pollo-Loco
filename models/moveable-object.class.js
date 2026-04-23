@@ -7,7 +7,6 @@ class MoveableObject extends Drawableobject {
     energy = 100;
     lastHit = 0;
 
-
     applyGravity() {
         setInterval(() => {
             if(this.isAboveGround() || this.speedY > 0) {
@@ -22,14 +21,11 @@ class MoveableObject extends Drawableobject {
         return this.y < 195;
     }
 
-
-    // Kollisionserkennung mit einem anderen beweglichen Objekt -> chicken mit dem Charakter!
     isColliding(moveableObject) {
     return this.x + this.width > moveableObject.x &&
     this.y + this.height > moveableObject.y &&
     this.x < moveableObject.x &&
     this.y < moveableObject.y + moveableObject.height;
-
     }
 
     hit() {
@@ -42,8 +38,8 @@ class MoveableObject extends Drawableobject {
     }
 
     isHurt() {
-    let timepassed = new Date().getTime() - this.lastHit; // Time Derfernce in ms
-    timepassed = timepassed / 1000; // Time Defernce in s
+    let timepassed = new Date().getTime() - this.lastHit; 
+    timepassed = timepassed / 1000; 
     return timepassed < 0.8;    
     }
 
@@ -51,8 +47,6 @@ class MoveableObject extends Drawableobject {
         return this.energy == 0;
     }
     
-
-
     playAnimation(images) {
         let i = this.currentImages % images.length;
         let path = images[i];
@@ -62,8 +56,6 @@ class MoveableObject extends Drawableobject {
 
     moveRight() {
         this.x += this.speed;
-        
-        
     }
 
     moveLeft() {

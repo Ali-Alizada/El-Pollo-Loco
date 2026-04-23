@@ -7,12 +7,9 @@ class Drawableobject {
     imgCache = {};
     currentImages = 0;
 
-    
-    // laodImage('img')
     loadImage(path) {
-        this.img = new Image(); // this.img = document.getElementById('img');
+        this.img = new Image(); 
         this.img.src = path;
- 
     }
 
     draw(ctx) {
@@ -21,11 +18,7 @@ class Drawableobject {
 
         drawFrame(ctx) {
         if(this instanceof Character || this instanceof Chicken) {
-            ctx.beginPath();
-            // ctx.lineWidth = '2';
-            // ctx.strokeStyle = 'blue';
-            // ctx.rect(this.x, this.y, this.width, this.height);
-            // ctx.stroke();
+        ctx.beginPath();
         }
     }
 

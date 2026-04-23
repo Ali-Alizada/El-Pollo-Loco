@@ -1,6 +1,7 @@
 class SoundManager {
 
     constructor() {
+        this.muted = false;
         this.sounds = {
             coin: new Audio('assets/audio/collectibles/collectSound.wav'),
             bottle: new Audio('assets/audio/collectibles/bottleCollectSound.wav'),
@@ -8,7 +9,7 @@ class SoundManager {
             jump: new Audio('assets/audio/character/characterJump.wav'),
             walking: new Audio('assets/audio/character/characterRun.mp3'),
             snoring: new Audio('assets/audio/character/characterSnoring.mp3'),
-            characterDead: new Audio('assets/audio/character/characterDead.wav'),
+            // characterDead: new Audio('assets/audio/character/characterDead.wav'),
             chicken: new Audio('assets/audio/chicken/chickenDead.mp3'),
             smallChicken: new Audio('assets/audio/chicken/chickenDead2.mp3'),
             bossHit: new Audio('assets/audio/endboss/endboss-angry.mp3'),
@@ -24,30 +25,35 @@ class SoundManager {
             s.volume = 0.2;
             s.loop = false;
         });
+
+        
     }
 
-    play(name) {
-        let sound = this.sounds[name];
-        if (!sound) return;
+            play(name) {
+            if (!this.muted) {
+                this.sounds[name].play();
+            }
+        }
 
-        sound.currentTime = 0;
-        sound.play().catch(() => {});
-    }
+        stop(name) {
+            this.sounds[name].pause();
+            this.sounds[name].currentTime = 0;
+        }
 
-    loop(name) {
-        let sound = this.sounds[name];
-        if (!sound) return;
+        loop(name) {
+            if (!this.muted) {
+                this.sounds[name].loop = true;
+                this.sounds[name].play();
+            }
+        }
 
-        sound.loop = true;
-        sound.play().catch(() => {});
-    }
+        toggle() {
+            this.muted = !this.muted;
 
-    stop(name) {
-        let sound = this.sounds[name];
-        if (!sound) return;
-
-        sound.pause();
-        sound.currentTime = 0;
-        sound.loop = false;
-    }
+            if (this.muted) {
+                Object.values(this.sounds).forEach(sound => sound.pause());
+            } else {
+                this.loop('bgMusic');
+            }
+        }
 }

@@ -6,9 +6,7 @@ class SmallChicken extends Chicken {
         this.width = 45;
         this.y = 370;
 
-        
-
-     this.IMAGES_WALKING = [
+    this.IMAGES_WALKING = [
         'img/3_enemies_chicken/chicken_small/1_walk/1_w.png',
         'img/3_enemies_chicken/chicken_small/1_walk/2_w.png',
         'img/3_enemies_chicken/chicken_small/1_walk/3_w.png',
@@ -19,27 +17,21 @@ class SmallChicken extends Chicken {
 
 
         
-        this.IMAGES_DEAD = [
-            'img/3_enemies_chicken/chicken_small/2_dead/dead.png'
-        ];
-
+    this.IMAGES_DEAD = [
+        'img/3_enemies_chicken/chicken_small/2_dead/dead.png'
+    ];
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_DEAD);
-        
-
         this.x = 450 + Math.random() * 1000;
-        this.speed = 0.2 + Math.random() * 0.3; // bisschen schneller 😈
-
-        
+        this.speed = 0.2 + Math.random() * 0.3;
     }
 
     die() {
         this.isDeadState = true;
         this.speed = 0;
 
-        // 🔥 Flaschen droppen
         if (this.world) {
-            for (let i = 0; i < 2; i++) { // 🔥 Anzahl hier ändern
+            for (let i = 0; i < 2; i++) {
                 this.world.spawnBottle(
                     this.x + Math.random() * 500,
                     this.y
@@ -52,6 +44,5 @@ class SmallChicken extends Chicken {
             this.markedForDeletion = true;
         }, 1000);
     }
-
 
 }

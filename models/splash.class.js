@@ -7,23 +7,17 @@ class Splash extends Drawableobject {
         'img/6_salsa_bottle/bottle_rotation/bottle_splash/4_bottle_splash.png',
         'img/6_salsa_bottle/bottle_rotation/bottle_splash/5_bottle_splash.png',
         'img/6_salsa_bottle/bottle_rotation/bottle_splash/6_bottle_splash.png'
-
-
-   
     ];
 
     currentImage = 0;
     finished = false;
-
     constructor(x, y) {
         super().loadImage(this.IMAGES_SPLASH[0]); // ✅ korrekt!
         this.loadImages(this.IMAGES_SPLASH);
-
         this.x = x;
         this.y = y;
         this.width = 100;
         this.height = 100;
-
         this.animate();
     }
 
@@ -43,6 +37,4 @@ class Splash extends Drawableobject {
             }
         }, 100);
     }
-
-
 }

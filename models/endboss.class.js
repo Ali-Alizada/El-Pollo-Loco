@@ -3,13 +3,9 @@ class Endboss extends MoveableObject {
     height = 400;
     width = 280;
     y = 65;
-
     phase = 1;
-
     energy = 100;
-
     world;
-
     currentImages = 0;
     currentState = "walk";
 
@@ -56,118 +52,77 @@ class Endboss extends MoveableObject {
 
     constructor() {
         super().loadImage(this.IMAGES_WALKING[0]);
-
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_ALERT);
         this.loadImages(this.IMAGES_ATTACK);
         this.loadImages(this.IMAGES_HURT);
         this.loadImages(this.IMAGES_DEAD);
-
         this.x = 2900;
         this.startX = this.x;
-
         this.speed = 2;
         this.otherDirection = true;
-
         this.currentState = "walk";
-        // ❌ KEIN animate hier!
     }
-
-
-    // =========================
-    // MAIN LOOP
-    // =========================
 
     animate() {
+    // Alte Intervalle löschen
+    if (this.moveInterval) clearInterval(this.moveInterval);
+    if (this.animationInterval) clearInterval(this.animationInterval);
 
-        // 🏃 Movement (sauber 1 Loop)
-        setInterval(() => {
+    // Bewegungs-Interval
+    this.moveInterval = setInterval(() => {
+        if (!this.world || this.isDead()) return;
+        this.checkPhase();
 
-            if (this.isDead()) return;
+        const characterX = this.world.character.x;
+        const distance = Math.abs(characterX - this.x);
+        const alertRange = this.alertRange || 600;
 
-            this.checkPhase();
-
-            let characterX = this.world.character.x;
-            let distance = this.distanceToCharacter();
-
-            let alertRange = this.alertRange || 600;
-
-            if (distance < alertRange) {
-
-                // 👉 CHASE PLAYER
-                if (characterX < this.x) {
-                    this.moveLeft();
-                    this.otherDirection = false;
-                } else {
-                    this.moveRight();
-                    this.otherDirection = true;
-                }
-
+        if (distance < alertRange) {
+            // Dem Spieler folgen
+            if (characterX < this.x) {
+                this.moveLeft();
+                this.otherDirection = false;
             } else {
-
-                // 👉 RETURN HOME (nach rechts)
-                if (this.x < this.startX) {
-                    this.moveRight();
-                    this.otherDirection = true;
-                }
+                this.moveRight();
+                this.otherDirection = true;
             }
-
-        }, 1000 / 60);
-
-
-        // 🎬 Animation Loop
-        setInterval(() => {
-
-            if (this.isDead()) {
-                this.playAnimation(this.IMAGES_DEAD);
-                return;
+        } else {
+            // Zur Startposition zurückkehren
+            if (this.x < this.startX) {
+                this.moveRight();
+                this.otherDirection = true;
             }
+        }
+    }, 1000 / 60);
 
-            let newState = "";
+    // Animations-Interval
+    this.animationInterval = setInterval(() => {
+        if (!this.world) return;
+        if (this.isDead()) {
+            this.playAnimation(this.IMAGES_DEAD);
+            return;
+        }
 
-            if (this.isHurt()) {
-                newState = "hurt";
+        let newState = "";
+        if (this.isHurt()) newState = "hurt";
+        else if (this.isAttacking()) newState = "attack";
+        else if (Math.abs(this.world.character.x - this.x) < (this.alertRange || 600)) newState = "walk";
+        else newState = "idle";
 
-            } else if (this.isAttacking()) {
-                newState = "attack";
+        if (this.currentState !== newState) {
+            this.currentImages = 0;
+            this.currentState = newState;
+        }
 
-            } else if (this.distanceToCharacter() < (this.alertRange || 600)) {
-                newState = "walk";
-
-            } else {
-                newState = "idle";
-            }
-
-            // 🔥 reset animation only on state change
-            if (this.currentState !== newState) {
-                this.currentImages = 0;
-                this.currentState = newState;
-            }
-
-            switch (newState) {
-                case "hurt":
-                    this.playAnimation(this.IMAGES_HURT);
-                    break;
-
-                case "attack":
-                    this.playAnimation(this.IMAGES_ATTACK);
-                    break;
-
-                case "walk":
-                    this.playAnimation(this.IMAGES_WALKING);
-                    break;
-
-                case "idle":
-                    this.playAnimation(this.IMAGES_ALERT);
-                    break;
-            }
-
-        }, 150);
-    }
-
-    // =========================
-    // PHASE SYSTEM
-    // =========================
+        switch (newState) {
+            case "hurt": this.playAnimation(this.IMAGES_HURT); break;
+            case "attack": this.playAnimation(this.IMAGES_ATTACK); break;
+            case "walk": this.playAnimation(this.IMAGES_WALKING); break;
+            case "idle": this.playAnimation(this.IMAGES_ALERT); break;
+        }
+    }, 150);
+}
 
     checkPhase() {
         if (this.energy < 30 && this.phase === 1) {
@@ -177,16 +132,10 @@ class Endboss extends MoveableObject {
 
     enterPhase2() {
         this.phase = 2;
+        this.speed = 3;       
+        this.alertRange = 800; 
 
-        this.speed = 3;        // 🔥 schneller
-        this.alertRange = 800; // 🔥 sieht weiter
-
-        console.log("🔥 PHASE 2 ACTIVE");
     }
-
-    // =========================
-    // LOGIC
-    // =========================
 
     distanceToCharacter() {
         return Math.abs(this.world.character.x - this.x);

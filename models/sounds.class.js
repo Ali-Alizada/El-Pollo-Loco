@@ -17,16 +17,12 @@ class SoundManager {
             gameOver: new Audio('assets/audio/gameover/defeat.mp3'),
             win: new Audio('assets/audio/victory/victory.mp3'),
             bgMusic: new Audio('assets/audio/bgsound/bgSound-1.mp3')
-
-
         };
 
         Object.values(this.sounds).forEach(s => {
-            s.volume = 0.2;
+            s.volume = 0.1;
             s.loop = false;
         });
-
-        
     }
 
             play(name) {

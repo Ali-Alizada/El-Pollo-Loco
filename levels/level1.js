@@ -1,34 +1,30 @@
     function createCoins() {
         let coins = [];
-
         for (let i = 0; i < 20; i++) {
             coins.push(
             new Coin(
-                    200 + Math.random() * 2000,
-                    60 + Math.random() * 300
+                200 + Math.random() * 2000,
+                60 + Math.random() * 300
                 )
             );
         }
-
         return coins;
     }
 
     function createBottles() {
         let bottles = [];
-
         for (let i = 0; i < 20; i++) {
             bottles.push(
             new Bottle(
-                    200 + Math.random() * 2000,
-                    330
+                200 + Math.random() * 2000,
+                330
                 )
             );
         }
         return bottles;
     }
 
-
-const level1 = new Level(
+    const level1 = new Level(
     [
         new Chicken(),
         new Chicken(),

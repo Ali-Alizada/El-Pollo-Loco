@@ -16,18 +16,15 @@ class StatusBarBoss extends Drawableobject {
     constructor() {
         super();
         this.loadImages(this.IMAGES);
-
-        this.x = 500; // rechts oben
+        this.x = 500; 
         this.y = 56;
         this.width = 200;
         this.height = 50;
-
         this.setPercentage(100);
     }
 
     setPercentage(percentage) {
         this.percentage = percentage;
-
         if (percentage <= 20) {
         this.isLow = true;
         this.startBlinking();

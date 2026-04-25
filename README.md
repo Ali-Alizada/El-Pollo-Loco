@@ -12,7 +12,7 @@ The game was built from scratch using vanilla JavaScript, with a strong focus on
 
 No frameworks. No libraries. Just pure JavaScript. <br> <br>
 
-<strong> ✨ Features <br> <br>  </strong>
+<strong> Features <br> <br>  </strong>
 <strong> Gameplay :  </strong>
 - Smooth character movement and jump physics
 - Enemy interactions with collision detection

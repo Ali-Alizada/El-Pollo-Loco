@@ -1,83 +1,128 @@
 🐔 El Pollo Loco
-El Pollo Loco is a fast-paced side-scrolling action game where you play as Pepe, a brave little adventurer. Run, jump, collect, and throw your way through a hostile desert – defeat the crazy chickens and their fearsome boss!
+<p align="center"> <img src="img/9_intro_outro_screens/start/startscreen_2.png" width="720" alt="El Pollo Loco Start Screen"> </p> <p align="center"> <strong>A high-performance 2D browser game built with pure JavaScript and HTML5 Canvas</strong> </p> <p align="center"> <a href="#">🎮 Play Live</a> • <a href="#features">✨ Features</a> • <a href="#architecture">🧱 Architecture</a> • <a href="#getting-started">🚀 Setup</a> </p>
+🎮 Game Overview
 
-https://img/9_intro_outro_screens/start/startscreen_2.png
+El Pollo Loco is a side-scrolling action game where players fight enemies, collect resources, and defeat a final boss.
 
-🎮 Play the Game
-Live Demo – replace with your GitHub Pages link
+The project was built from scratch using vanilla JavaScript, focusing on performance, clean architecture, and real-time game mechanics — without any external libraries or frameworks.
 
-✨ Game Features
-Smooth platformer controls (run, jump, throw)
+✨ Features
+🎯 Gameplay Mechanics
+Smooth character movement and jump physics
+Enemy interactions with collision detection
+Throwable objects (bottles)
+Boss fight with health system
+Collectibles (coins & bottles)
+🧠 Game Systems
+Finite State Machine (start, running, win, lose)
+Real-time collision engine
+Restart & full reset logic
+Object lifecycle management
+🎨 User Interface
+Dynamic UI overlay system
+Animated start, win, and game-over screens
+Interactive buttons with transitions
+Modal dialog system (with blur + animation)
+Responsive layout structure
+🔊 Audio System
+Background music loop
+Sound effects (hit, collect, boss, win/lose)
+Mute toggle with dynamic icon switching
+🖥️ Additional Features
+Fullscreen mode
+Asset preloading (ImageManager)
+Modular and scalable code structure
+🧪 Live Demo
 
-Collectable coins and bottles to fill your status bars
+👉 Play the Game
 
-Throw bottles at enemies – especially the Endboss
+(Insert your GitHub Pages link here)
 
-Challenging enemy AI: normal chickens, small chickens, a two‑phase Endboss
+🎯 Controls
+Key	Action
+⬅️ ➡️	Move left/right
+⬆️ / SPACE	Jump
+D	Throw bottle
+📸 Screenshots
+🟡 Start Screen
+<img src="img/9_intro_outro_screens/start/startscreen_2.png" width="500">
+🔴 Game Over
+<img src="img/You won, you lost/Game Over.png" width="500">
+🟢 Victory
+<img src="img/You won, you lost/You won A.png" width="500">
+🧱 Architecture
 
-Full in‑game sound system (toggle on/off)
+The game follows a modular, object-oriented structure:
 
-Fullscreen support
+World
+ ├── Character
+ ├── Enemies
+ │    ├── Chicken
+ │    └── Endboss
+ ├── Collectibles
+ │    ├── Coins
+ │    └── Bottles
+ ├── Status Bars
+ ├── Sound Manager
+ └── Image Manager
 
-Win / Lose screens with restart & home buttons
-
-Privacy & Game Info dialogs
-
-🕹️ Controls
-Action	Key
-Move left	⬅️ Arrow Left
-Move right	➡️ Arrow Right
-Jump	␣ Space
-Throw bottle	D
-Mute / unmute	🔊 Sound icon
-Fullscreen	⛶ Fullscreen icon
-🎯 Objective
-Collect 20 coins and 20 bottles (see status bars top‑left)
-
-Defeat normal and small chickens (jump on them or avoid them)
-
-Defeat the Endboss by hitting him with thrown bottles
-
-Don't let your health drop to zero!
-
-💻 Local Setup
-Clone the repository
-
-bash
+Key Concepts
+Game Loop using requestAnimationFrame
+State Management for UI and gameplay
+Entity-based system
+Separation of concerns (UI vs Game Logic)
+🛠 Tech Stack
+Technology	Purpose
+HTML5 Canvas	Rendering engine
+JavaScript (ES6)	Game logic
+CSS3	UI and animations
+🚀 Getting Started
+1. Clone the repository
 git clone https://github.com/your-username/el-pollo-loco.git
-cd el-pollo-loco
-Open the game
 
-Simply open index.html in any modern browser (Chrome, Firefox, Edge).
+2. Run locally
 
-No build step, no server required – it's pure HTML5 / JavaScript.
+Use a local development server:
 
-Assets
+# Example (VS Code)
+Right-click index.html → Open with Live Server
 
-All images and sounds are included in the img/ and assets/audio/ folders.
 
-🧠 Technical Details
-Built with plain HTML5, CSS3, and JavaScript (ES6)
+⚠️ Running via file:// may cause asset loading issues.
 
-Object‑oriented architecture: World, Character, Enemy, StatusBar, etc.
+⚠️ Important Notes
+Audio playback requires user interaction due to browser security policies
+All assets must be served via a local server
+🧠 What This Project Demonstrates
 
-Collision detection, gravity, invincibility frames, and spawn protection
+This project highlights:
 
-All game loops use setInterval / requestAnimationFrame (cleaned up on restart)
+Structuring large-scale JavaScript applications
+Real-time rendering and animation handling
+Building interactive UI systems
+Managing complex game states
+Debugging performance-critical logic
+🔮 Future Improvements
+📱 Mobile / touch controls
+🧠 Advanced enemy AI
+🌍 Multiple levels
+💾 Save & load system
+🏆 Leaderboard
+📜 Privacy Policy
+No personal data collected
+No cookies
+No tracking
 
-📝 Credits
-Developer – Aliaqa Alizada / GitHub Ali-Alizada
+This game runs entirely in your browser.
 
-Art & Design – Original assets inspired by classic platformers
+👨‍💻 Author
 
-Sound Effects – Royalty‑free sources (e.g., Freesound.org)
+Developed as a portfolio project focused on clean architecture and gameplay systems.
 
-Special Thanks – Open source community
+⭐ Support
 
-📄 License
-This project is released under the MIT License – feel free to use, modify, and distribute.
+If you like this project:
 
-🤝 Contributing
-Found a bug or have a suggestion? Open an Issue or submit a Pull Request.
-
-Enjoy the game – and watch out for the big chicken! 🐔💥
+⭐ Star the repository
+🍴 Fork it
+🛠 Contribute improvements

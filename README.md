@@ -1,76 +1,59 @@
-🐔 El Pollo Loco
-<p align="center"> <img src="img/9_intro_outro_screens/start/startscreen_2.png" width="720" alt="El Pollo Loco Start Screen"> </p> <p align="center"> <strong>A 2D browser game built with Object-Oriented JavaScript and the HTML5 Canvas API</strong> </p> <p align="center"> <a href="#">🎮 Play Live</a> • <a href="#features">✨ Features</a> • <a href="#architecture">🧱 Architecture</a> • <a href="#getting-started">🚀 Setup</a> </p>
-🎮 Game Overview
+<strong> 🐔 El Pollo Loco </strong>
+<p align="center"> <img src="img/9_intro_outro_screens/start/startscreen_2.png" width="720" alt="El Pollo Loco Start Screen"> </p> <p align="center"> <strong>A 2D browser game built with Object-Oriented JavaScript and the HTML5 Canvas API</strong> </p> <p align="center"> <a href="#"> Play Live</a> • <a href="#features"> Features</a> • <a href="#architecture"> Architecture</a> • <a href="#getting-started"> Setup</a> </p> <br> <br>
 
-El Pollo Loco is a fast-paced 2D side-scrolling action game where players
-fight enemies, collect resources, and defeat a final boss.
+<strong> Game Overview : </strong>
+<br> 
+El Pollo Loco is a fast-paced 2D side-scrolling action game where players fight enemies, collect resources, and defeat a final boss.
+The game was built from scratch using vanilla JavaScript, with a strong focus on: <br> 
 
-Built completely from scratch using vanilla JavaScript, the project focuses on:
+- Clean object-oriented architecture
+- Real-time rendering & animation
+- High performance and responsiveness
 
-Clean object-oriented architecture
-Real-time rendering & animation
-High performance and responsiveness
+No frameworks. No libraries. Just pure JavaScript. <br> <br>
 
-No frameworks. No libraries. Just pure JavaScript.
+<strong> ✨ Features <br> <br>  </strong>
+<strong> Gameplay :  </strong>
+- Smooth character movement and jump physics
+- Enemy interactions with collision detection
+- Throwable weapons (bottles)
+- Boss fight with health system
+- Collectibles (coins & bottles)
 
-✨ Features
-🎯 Gameplay
+<strong> Game Systems : </strong>
+- Finite State Machine (start, running, win, lose)
+- Real-time collision engine
+- Full restart & reset logic
+- Object lifecycle management
 
-Smooth character movement and jump physics
-Enemy interactions with collision detection
-Throwable weapons (bottles)
-Boss fight with health system
-Collectibles (coins & bottles)
+<strong> User Interface : </strong>
+- Dynamic UI overlay system
+- Animated start, win, and game-over screens
+- Interactive buttons with smooth transitions
+- Modal dialog system (blur + animation)
+- Responsive layout
 
-🧠 Game Systems
+<strong> Audio : </strong>
+- Background music loop
+- Sound effects (hit, collect, boss, win/lose)
+- Mute toggle with dynamic icon
 
-Finite State Machine (start, running, win, lose)
-Real-time collision engine
-Full restart & reset logic
-Object lifecycle management
+<strong> Additional : </strong>
+- Fullscreen mode
+- Asset preloading system (ImageManager)
+- Modular and scalable code structure
 
-🎨 User Interface
+<strong> Live Demo <br> </strong>
+Play the Game 
+(https://github.com/Ali-Alizada)
 
-Dynamic UI overlay system
-Animated start, win, and game-over screens
-Interactive buttons with smooth transitions
-Modal dialog system (blur + animation)
-Responsive layout
+<strong> Controls : <br> <br> </strong>
+⬅️ ➡️ Move left / right <br>
+⬆️ / SPACE Jump <br>
+D   Throw bottle <br>
 
-🔊 Audio
-
-Background music loop
-Sound effects (hit, collect, boss, win/lose)
-Mute toggle with dynamic icon
-
-🖥️ Additional
-
-Fullscreen mode
-Asset preloading system (ImageManager)
-Modular and scalable code structure
-
-🧪 Live Demo
-
-👉 Play the Game
-(Add your GitHub Pages link here)
-
-🎯 Controls
-
-⬅️ ➡️ Move left / right
-⬆️ / SPACE Jump
-D Throw bottle
-
-📸 Screenshots
-🟡 Start Screen
-<p align="center"> <img src="img/9_intro_outro_screens/start/startscreen_2.png" width="500"> </p>
-🔴 Game Over
-<p align="center"> <img src="img/You won, you lost/Game Over.png" width="500"> </p>
-🟢 Victory
-<p align="center"> <img src="img/You won, you lost/You won A.png" width="500"> </p>
-🧱 Architecture
-
-The game follows a modular, object-oriented design:
-
+<strong> Architecture <br> </strong>
+The game follows a modular, object-oriented design : <br> <br>
 World
  ├── Character
  ├── Enemies
@@ -81,80 +64,67 @@ World
  │    └── Bottles
  ├── Status Bars
  ├── Sound Manager
- └── Image Manager
+ └── Image Manager <br><br> 
 
-Key Concepts
+<strong> Key Concepts : </strong>
+- Game loop using requestAnimationFrame
+- State management for UI and gameplay
+- Entity-based architecture
+- Separation of concerns (UI vs Game Logic)
 
-Game loop using requestAnimationFrame
-State management for UI and gameplay
-Entity-based architecture
-Separation of concerns (UI vs Game Logic)
+<strong> Tech Stack : </strong>
+- HTML5 Canvas → Rendering engine
+- JavaScript (ES6) → Game logic (OOP)
+- CSS3 → UI & animations
 
-🛠 Tech Stack
-
-HTML5 Canvas → Rendering engine
-JavaScript (ES6) → Game logic (OOP)
-CSS3 → UI & animations
-
-🚀 Getting Started
+<strong> Getting Started : </strong>
 1. Clone the repository
-git clone https://github.com/your-username/el-pollo-loco.git
+git clone https://github.com/Ali-Alizada/el-pollo-loco.git
 
 2. Run locally
-
 Use a local development server:
-
 Right-click index.html → Open with Live Server
 
-⚠️ Running via file:// may cause asset loading issues
+Running via file:// may cause asset loading issues
 
-⚠️ Important Notes
+<strong> Important Notes : </strong>
+- Audio playback requires user interaction (browser policy)
+- All assets must be served via a local server
 
-Audio playback requires user interaction (browser policy)
-All assets must be served via a local server
+<strong> What This Project Demonstrates : </strong>
+- Structuring large JavaScript applications
+- Real-time rendering and animation systems
+- Interactive UI development
+- Game state management
+- Debugging performance-critical logic <br>
 
-🧠 What This Project Demonstrates
+<strong> Future Improvements : </strong>
+- Mobile / touch controls
+- Advanced enemy AI
+- Multiple levels
+- Save & load system
+- Leaderboard
 
-Structuring large JavaScript applications
-Real-time rendering and animation systems
-Interactive UI development
-Game state management
-Debugging performance-critical logic
-
-🔮 Future Improvements
-
-📱 Mobile / touch controls
-🧠 Advanced enemy AI
-🌍 Multiple levels
-💾 Save & load system
-🏆 Leaderboard
-
-📜 Privacy Policy
-
-No personal data collected
-No cookies
-No tracking
-
+<strong> Privacy Policy : </strong>
+- No personal data collected
+- No cookies
+- No tracking
 Runs entirely in your browser
 
-👨‍💻 Author
+<strong> Author 
+Developed as a portfolio project with focus on : </strong>
+- Clean architecture
+- Gameplay systems
+- Performance
 
-Developed as a portfolio project with focus on:
+<strong> Support 
+If you like this project : </strong>
+- Star the repository
+- Fork it
+- Contribute improvements
 
-Clean architecture
-Gameplay systems
-Performance
-
-⭐ Support
-
-If you like this project:
-
-⭐ Star the repository
-🍴 Fork it
-🛠 Contribute improvements
-
-🔥 Why this version is better
-No “GitHub bullet clutter”
-Clean spacing like real game docs
-Easy to scan in 5 seconds
-Looks like actual game studio documentation
+<strong> Why this version is better : </strong>
+- No “GitHub bullet clutter”
+- Clean spacing like real game docs
+- Easy to scan in 5 seconds
+- Looks like actual game studio documentation

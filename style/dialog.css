@@ -1,0 +1,80 @@
+
+#dialog {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+    z-index: 999;
+}
+
+#dialog.show {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.dialog-box {
+    background: linear-gradient(180deg, #fff7e6, #ffe0b3);
+    padding: 24px;
+    height: 65%;
+    width: 60%;
+    border-radius: 10px;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    transform: scale(0.7);
+    opacity: 0;
+    transition: all 0.25s ease;
+    overflow: auto;
+}
+
+.dialog-box::-webkit-scrollbar {
+    width: 4px;
+}
+
+.dialog-box::-webkit-scrollbar-thumb {
+    background: #ff7b00;
+    border-radius: 10px;
+}
+
+#dialog.show .dialog-box {
+    transform: scale(1);
+    opacity: 1;
+}
+
+#closeDialog {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+    transition: transform 0.2s ease;
+}
+
+#closeDialog:hover {
+    transform: scale(1.2);
+}
+
+.dialog-content {
+    display: none;
+}
+
+.dialog-content.active {
+    display: block;
+}
+
+.dialog-content h2 {
+    font-family: 'Rye', serif;
+}
+
+.dialog-content p {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+}

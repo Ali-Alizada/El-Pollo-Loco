@@ -10,14 +10,12 @@ class ImageManager {
             soundOff: this.load('img/8_coin/volume_off.png'),
             fullscreenIcon: this.load('img/8_coin/fullscreen.png'),
         };
-
     }
 
     load(path) {
         let img = new Image();
         img.src = path;
         img.onload = () => {
-            console.log("Loaded:", path);
         };
         return img;
     }

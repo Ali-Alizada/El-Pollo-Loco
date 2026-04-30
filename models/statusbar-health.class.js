@@ -20,12 +20,10 @@ class Statusbarhealth extends Drawableobject{
         this.height = 50;
     }
 
-
-    setPercentage(percentage) { // set Percentage (50);
-        this.percentage = percentage; // 0 to 5 imges.  
+    setPercentage(percentage) { 
+        this.percentage = percentage; 
         let path = this.IMAGES_HEALTH[this.resoveImageIndex()];
         this.img = this.imgCache[path];
-
     }
 
     resoveImageIndex() {
@@ -43,7 +41,6 @@ class Statusbarhealth extends Drawableobject{
             return 0;
         }
     }
-
 }
 
 

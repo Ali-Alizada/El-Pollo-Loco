@@ -7,6 +7,9 @@
     <title>El PoIIo Loco</title>
     <link rel="icon" type="image/png" href="img/favicon/favicon-epl.png">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style/dialog.css">
+    <link rel="stylesheet" href="style/mobile-controls.css">
+    <link rel="stylesheet" href="style/responsive.css">
 
     <script src="models/drawable-object.class.js" defer></script>
     <script src="models/moveable-object.class.js" defer></script>
@@ -54,7 +57,7 @@
 
             <div class="bottom-bar">
                 <div><a id="privacyBtn" href="#">Privacy Policy</a></div>
-                <div> <a id="infoBtn" href="#">Game Info</a></div>
+                <div> <a id="infoBtn" href="#">Game Info & Imprint</a></div>
             </div>
 
             <div id="startScreen" class="screen active">
@@ -81,19 +84,20 @@
             </div>
 
             <div id="dialog">
-                <div class="dialog-box">
+                <div class="dialog-box dialog-body">
                     <span id="closeDialog">✖</span>
                     <div id="privacyContent" class="dialog-content">
                         <h2>Privacy Policy</h2>
                         <p>
-                            El Pollo Loco - Privacy Policy<br>
-                            We do not collect any personal data.<br>
-                            This game runs entirely in your browser.<br>
-                            No cookies, no tracking, no data sharing.<br><br>
+                            This game does not collect, store, or process any personal data.<br>
+                            No cookies are used<br>
+                            No tracking technologies are implemented<br>
+                            No user data is shared with third parties<br><br>
 
-                            Contact us:<br>
-                            Email: bspiel@elpolloloco.com<br>
-                            Phone: +49 553 456 7890<br>
+                            The game runs entirely in your browser.<br><br>
+
+                            If you contact us via email, your data will only be used to respond to your request.<br>
+
                             © 2026 El Pollo Loco Game
                         </p>
                     </div>
@@ -101,15 +105,52 @@
                     <div id="infoContent" class="dialog-content">
                         <h2>Game Info</h2>
                         <p>
-                            Controls:<br>
-                            Arrow Keys: Move left / right<br>
-                            Space: Jump<br>
-                            D: Throw bottle<br><br>
-                            Objective: Collect coins and bottles
-                            Defeat enemies and the final boss!
+                            <strong>Controls:</strong> <br>
+                            Arrow Keys → Move<br>
+                            Space → Jump<br>
+                            D → Throw bottle<br><br>
 
+                            <strong> Objective:</strong> <br>
+                            Collect coins and bottles, defeat enemies, and beat the final boss.<br><br>
+                            <strong>Tips:</strong> <br>
+
+                            Jump on chickens to defeat them.<br>
+                            Use bottles strategically against the boss.<br>
+                            Keep an eye on your health.<br><br>
+                            Good luck and have fun!
+                        </p>
+                        <h2>Imprint</h2>
+                        <p>
+
+                            Aliaqa Alizada <br>
+                            Venise-Gosnat-Str. 4 <br>
+                            14770 Brandenburg an der Havel, Germany<br> <br>
+
+                            <strong>Contact:</strong> <br>
+
+                            alimhd276@gmail.com<br><br>
+                            This project is a non-commercial portfolio project.
                         </p>
                     </div>
+                </div>
+            </div>
+
+            <div id="mobile-controls">
+                <div id="joystick">
+                    <div id="joystick-base">
+                        <div id="joystick-knob"></div>
+                    </div>
+                </div>
+                <div class="action-controls">
+                    <button id="btnJump"><span>Jump</span></button>
+                    <button id="btnThrow"><span>Shoot</span></button>
+                </div>
+            </div>
+
+            <div id="rotate-overlay">
+                <div class="rotate-content">
+                    <div class="rotate-icon"><img src="img/rotation_icon/rotated.png" alt=""></div>
+                    <h2>Turn your device to landscape</h2>
                 </div>
             </div>
 

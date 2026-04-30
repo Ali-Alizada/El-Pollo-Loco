@@ -57,46 +57,54 @@ class Endboss extends MoveableObject {
         this.loadImages(this.IMAGES_ATTACK);
         this.loadImages(this.IMAGES_HURT);
         this.loadImages(this.IMAGES_DEAD);
-        this.x = 2900;
+        this.x = 2500;
         this.startX = this.x;
-        this.speed = 2;
+        this.speed = 2.5;
+        this.aggressiveSpeed = 8;
+        this.aggressiveRange = 300;
         this.otherDirection = true;
+        this.normalY = 65;
+        this.flyingY = 40;   
         this.currentState = "walk";
     }
 
     animate() {
-    // Alte Intervalle löschen
     if (this.moveInterval) clearInterval(this.moveInterval);
     if (this.animationInterval) clearInterval(this.animationInterval);
 
-    // Bewegungs-Interval
     this.moveInterval = setInterval(() => {
         if (!this.world || this.isDead()) return;
         this.checkPhase();
-
         const characterX = this.world.character.x;
         const distance = Math.abs(characterX - this.x);
-        const alertRange = this.alertRange || 600;
+        const alertRange = this.alertRange || 650;
 
-        if (distance < alertRange) {
-            // Dem Spieler folgen
-            if (characterX < this.x) {
-                this.moveLeft();
-                this.otherDirection = false;
-            } else {
-                this.moveRight();
-                this.otherDirection = true;
-            }
+        let currentSpeed = (distance < this.aggressiveRange) ? this.aggressiveSpeed : this.speed;
+
+    if (distance < alertRange) {
+        if (characterX < this.x) {
+            this.x -= currentSpeed;
+            this.otherDirection = false;
         } else {
-            // Zur Startposition zurückkehren
-            if (this.x < this.startX) {
-                this.moveRight();
-                this.otherDirection = true;
-            }
+            this.x += currentSpeed;
+            this.otherDirection = true;
         }
-    }, 1000 / 60);
+    } else {
+        if (this.x < this.startX) {
+            this.x += currentSpeed;
+            this.otherDirection = true;
+        }
+    }
 
-    // Animations-Interval
+        if (this.isAttacking()) {
+            let floatOffset = Math.sin(Date.now() / 200) * 5;
+            this.y = this.flyingY + floatOffset;
+        } else {
+            this.y = this.normalY;
+    }
+    }, 1000 / 25);
+
+
     this.animationInterval = setInterval(() => {
         if (!this.world) return;
         if (this.isDead()) {
@@ -107,7 +115,7 @@ class Endboss extends MoveableObject {
         let newState = "";
         if (this.isHurt()) newState = "hurt";
         else if (this.isAttacking()) newState = "attack";
-        else if (Math.abs(this.world.character.x - this.x) < (this.alertRange || 600)) newState = "walk";
+        else if (Math.abs(this.world.character.x - this.x) < (this.alertRange || 650)) newState = "walk";
         else newState = "idle";
 
         if (this.currentState !== newState) {
@@ -121,8 +129,8 @@ class Endboss extends MoveableObject {
             case "walk": this.playAnimation(this.IMAGES_WALKING); break;
             case "idle": this.playAnimation(this.IMAGES_ALERT); break;
         }
-    }, 150);
-}
+    }, 300);
+    }
 
     checkPhase() {
         if (this.energy < 30 && this.phase === 1) {
@@ -142,7 +150,7 @@ class Endboss extends MoveableObject {
     }
 
     isAttacking() {
-        return this.distanceToCharacter() < (this.attackRange || 250);
+        return this.distanceToCharacter() < this.aggressiveRange;
     }
 
     isHurt() {

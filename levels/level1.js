@@ -1,4 +1,16 @@
-    function createCoins() {
+    function createClouds() {
+        const clouds = [];
+        const startX = -200;      
+        const endX = 3200;
+        const step = 600;         
+        for (let x = startX; x < endX; x += step) {
+            const offsetX = Math.random() * 150;
+            clouds.push(new Cloud(x + offsetX));
+        }
+        return clouds;
+    }
+   
+   function createCoins() {
         let coins = [];
         for (let i = 0; i < 20; i++) {
             coins.push(
@@ -38,7 +50,7 @@
         new Endboss()
     ],
 
-    [new Cloud()],
+     createClouds(),   
 
     [
         new backgroudObject('img/5_background/layers/air.png', -720),

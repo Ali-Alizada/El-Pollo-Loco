@@ -1,68 +1,89 @@
-/* rye-regular - latin */
-@font-face { /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
-  font-family: 'Rye';
-  font-style: normal;
-  src: url('assets/fonts/rye-v17-latin-regular.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+@font-face {
+    font-family: 'Rye';
+    font-style: normal;
+    src: url('assets/fonts/rye-v17-latin-regular.woff2') format('woff2');
 }
 
-@font-face { /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
-  font-family: 'Inter';
-  font-style: normal;
-  src: url('assets/fonts/inter-v20-latin-regular.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    src: url('assets/fonts/inter-v20-latin-regular.woff2') format('woff2');
+}
+
+* {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
-    font-family: 'inter', serif;
+    font-family: 'Inter', serif;
     margin: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 100vh;
+    justify-content: center;
+    min-height: 100vh;
     background-image: url("img/9_intro_outro_screens/canvas_hintergrund/cactus.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    overflow-x: hidden;
+    position: relative;
 }
 
-canvas{
-    background-color: black;
-    z-index: 1;
-}
-
-h1{
-    font-family: 'Rye';
+h1 {
+    font-family: 'Rye', cursive;
     color: #ffb347;
     font-size: 56px;
-    margin:100px 0 20px 0;
+    margin: 20px 0 20px 0;
+    text-shadow: 2px 10px 10px rgba(100, 10, 50, 5);
+    text-align: center;
 }
 
 #game-container {
     position: relative;
     width: 720px;
     height: 480px;
+    margin: 0 auto;
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    z-index: 1;
 }
 
 #ui {
     position: absolute;
     top: 0;
     left: 0;
-    width: 720px;
-    height: 480px;
+    width: 100%;
+    height: 100%;
     pointer-events: none;
     z-index: 10;
+}
+
+.top-bar,
+.bottom-bar,
+.screen.active,
+#mobile-controls {
+    pointer-events: all;
 }
 
 .top-bar {
     position: absolute;
     top: 20px;
     right: 20px;
-    pointer-events: all;
+    display: flex;
+    gap: 10px;
     z-index: 20;
 }
 
 .top-bar img {
-    width: 24px;
-    margin-left: 10px;
+    width: 28px;
     cursor: pointer;
     transition: transform 0.2s ease, filter 0.2s ease;
 }
@@ -76,32 +97,6 @@ h1{
     transform: scale(0.95);
 }
 
-button {
-    padding: 12px 24px;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    background: linear-gradient(180deg, #ffb347, #ff7b00);
-    color: white;
-    box-shadow: 0 4px 0 #c25a00;
-    transition: all 0.15s ease;
-}
-
-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 0 #c25a00;
-}
-
-button:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px 0 #c25a00;
-}
-
-.main-btn {
-    font-size: 24px;
-    padding: 16px 40px;
-}
-
 .bottom-bar {
     position: absolute;
     bottom: 12px;
@@ -109,7 +104,6 @@ button:active {
     display: flex;
     gap: 20px;
     z-index: 30;
-    pointer-events: all;
 }
 
 .bottom-bar a {
@@ -142,6 +136,10 @@ button:active {
     width: 100%;
 }
 
+#ui .top-bar img{
+    filter: brightness(100) invert(100%) sepia(10%) saturate(100%) hue-rotate(340deg) brightness(100%);
+}
+
 .screen {
     position: absolute;
     width: 100%;
@@ -158,140 +156,75 @@ button:active {
     pointer-events: all;
 }
 
-.btn-row {
-    display: flex;
-    gap: 20px; 
-    justify-content: center;
-    margin-top: 20px;
-    
+.bg-img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 0;
 }
 
-.btn-row button {
-    transition: transform 0.2s ease;
-    min-width: 160px;
-    font-size: 20px;
+.result-img {
+    width: 500px;
+    height: auto;
+    max-width: 65%;
+    padding-top: 70px;
+    z-index: 1;
 }
-
-.btn-row button:hover {
-    transform: scale(1.05);
+#winScreen .result-img {
+    width: 500px;
+    height: 290px;
+    max-width: 65%;
+    z-index: 1;
 }
 
 .main-btn {
-    margin-bottom: 340px;
-    padding: 15px 30px;
+    margin-bottom: 330px;
+    padding: 10px 20px;
     font-size: 20px;
     font-weight: 600;
     cursor: pointer;
     z-index: 2;
 }
 
-.start-img {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: -1;
-}
-
-.bg-img {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-}
-
-.result-img {
-    width: 500px;
-    height: 350px;
-    
-}
-
-#dialog {
-    position: absolute;
-    width: 100%;
-    height: 100%;
+.btn-row {
     display: flex;
+    gap: 20px;
     justify-content: center;
-    align-items: center;
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
-    background: rgba(0, 0, 0, 0.4);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.25s ease;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    z-index: 2;
+}
+
+button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    background: linear-gradient(180deg, #ffb347, #ff7b00);
+    color: white;
+    box-shadow: 0 4px 0 #c25a00;
+    transition: all 0.15s ease;
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #c25a00;
+}
+
+button:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #c25a00;
+}
+
+.btn-row button {
+    min-width: 100px;
     font-size: 16px;
-    font-weight: 0;
-    z-index: 999;
 }
 
-#dialog.show {
-    opacity: 1;
-    pointer-events: all;
-}
 
-.dialog-box {
-    background: linear-gradient(180deg, #fff7e6, #ffe0b3);
-    padding: 24px;
-    width: 60%;
-    border-radius: 20px;
-    position: relative;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-    transform: scale(0.7);
-    opacity: 0;
-    transition: all 0.25s ease;
-}
-
-#dialog.show .dialog-box {
-    transform: scale(1);
-    opacity: 1;
-}
-
-#closeDialog {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    cursor: pointer;
-    font-size: 18px;
-    transition: transform 0.2s ease;
-}
-
-#closeDialog {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    cursor: pointer;
-}
-
-#closeDialog:hover {
-    transform: scale(1.2);
-}
-
-.dialog-content {
-    display: none;
-}
-
-.dialog-content.active {
-    display: block;
-}
-
-@keyframes popIn {
-    from {
-        transform: scale(0.8);
-        opacity: 0;
-    }
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-
-.hidden {
-    display: none !important;
-}
-
-@media (max-width: 600px) {
-    .btn-row {
-        flex-direction: column;
-    }
-}
 

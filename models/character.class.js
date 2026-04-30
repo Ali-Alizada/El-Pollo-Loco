@@ -1,16 +1,16 @@
 class Character extends MoveableObject {
-    y = 95;
-    height = 230;
+    height = 250;
     width = 120;
     speed = 15; 
     coins = 0;
     bottles = 0;
     lastHitTime = 0;
     lastMoveTime = new Date().getTime();
-    hitCooldown = 300; // Sekunde Pause
+    hitCooldown = 300; 
     walkingSoundPlaying = false;
     snoringSoundPlaying = false;
     deadSoundPlayed = false;
+    jumpAnimationPlayed = false;
     spawnProtected = true;
 
     IMAGES_IDLE = [
@@ -77,7 +77,6 @@ class Character extends MoveableObject {
             'img/2_character_pepe/5_dead/D-57.png'
     ];
 
-
     world;
     constructor() {     
         super().loadImage('img/2_character_pepe/2_walk/W-21.png');
@@ -87,9 +86,15 @@ class Character extends MoveableObject {
         this.loadImages(this.IMAGES_JUMPING);
         this.loadImages(this.IMAGES_HURT);
         this.loadImages(this.IMAGES_DEAD);
+        this.setToGround();   
         this.applyGravity(); 
         this.invincibleUntil = 0;
         this.spawnProtected = true;
+        this.hasKilledChicken = false;  
+        this.offsetX = 30; 
+        this.offsetWidth = 60; 
+        this.offsetY = 10;
+        this.offsetHeight = 20;
         setTimeout(() => this.spawnProtected = false, 2000);
         } 
 
@@ -114,7 +119,6 @@ class Character extends MoveableObject {
             this.lastMoveTime = Date.now();
         }
 
-        // Lauf-Sound
         const isMoving = (this.world.keyboard.RIGHT || this.world.keyboard.LEFT);
         if (isMoving && !this.isAboveGround()) {
             if (!this.walkingSoundPlaying) {
@@ -126,24 +130,36 @@ class Character extends MoveableObject {
             this.walkingSoundPlaying = false;
         }
 
-        // Springen
         if (this.world.keyboard.SPACE && !this.isAboveGround()) {
             this.jump();
             this.lastMoveTime = Date.now();
         }
-
-        // Kamera folgt
             this.world.camera_x = -this.x + 100;
-         }, 1000 / 60);
+        }, 1000 / 60);
 
-         // Animations-Loop (ca. 20 fps)
         this.stateAnimationInterval = setInterval(() => {
-        if (!this.world || this.world.gameState !== 'running') return;
+        if (this.isAboveGround()) {
+            if (!this.jumpAnimationPlayed) {
+                this.currentImages = 0;
+                this.jumpAnimationPlayed = true;
+            }
+            this.playAnimation(this.IMAGES_JUMPING);
+            if (this.currentImages >= this.IMAGES_JUMPING.length) {
+                this.currentImages = this.IMAGES_JUMPING.length - 1;
+            }
+            return;
+        } else {
+            this.jumpAnimationPlayed = false;
+        }
 
         if (this.isDead()) {
-            this.playAnimation(this.IMAGES_DEAD);
-            return;
+        this.playAnimation(this.IMAGES_DEAD);
+        if (this.currentImages >= this.IMAGES_DEAD.length && this.world.gameState === "dying") {
+            this.world.gameState = "lose";
         }
+        return;
+        }   
+
         if (this.isHurt()) {
             this.playAnimation(this.IMAGES_HURT);
             return;
@@ -172,23 +188,44 @@ class Character extends MoveableObject {
         }, 50);
         }
 
+            resetIdleTimer() {
+        this.lastMoveTime = Date.now();
+        if (this.world) {
+            this.world.sound.stop('snoring');
+            this.snoringSoundPlaying = false;
+        }
+        }
 
-            // Replace the hit() method with:
-            hit() {
-            let now = Date.now();
-            if (now < this.invincibleUntil) return; // invincible frames
-            if (now - this.lastHitTime > this.hitCooldown) {
-                this.energy -= 5; // reduced from 10 to 5
-                if (this.energy < 0) this.energy = 0;
-                this.lastHitTime = now;
-                this.lastHit = now;
-                this.invincibleUntil = now + 1000; // 1 second invincibility
+        updateMovement() {
+        if (this.world.keyboard.axisX !== 0) {
+            this.x += this.world.keyboard.axisX * 5;
+        }
+
+        fallback (keyboard)
+        if (this.world.keyboard.RIGHT) {
+            this.moveRight();
+        }
+
+        if (this.world.keyboard.LEFT) {
+            this.moveLeft();
+        }
+        }
+
+        hit() {
+        let now = Date.now();
+        if (now < this.invincibleUntil) return; 
+        if (now - this.lastHitTime > this.hitCooldown) {
+            this.energy -= 5; 
+        if (this.energy < 0) this.energy = 0;
+            this.lastHitTime = now;
+            this.lastHit = now;
+            this.invincibleUntil = now + 1000; 
             }
             }
 
-            jump() {
-            console.log("JUMP");
+        jump() {
             this.speedY = 30;
+            this.hasKilledChicken = false;   
             this.world.sound.play('jump');  
             }
 }

@@ -1,5 +1,6 @@
 class MoveableObject extends Drawableobject {
   
+    static GROUND_Y = 420; 
     speed = 0.15;
     otherDirection = false;
     speedY = 0;
@@ -13,19 +14,21 @@ class MoveableObject extends Drawableobject {
             this.y -= this.speedY;
             this.speedY -= this.acceleration;
             }
-
         }, 1000 / 25);
     }
 
     isAboveGround() {
-        return this.y < 195;
+        return (this.y + this.height) < MoveableObject.GROUND_Y;
+    }
+      setToGround() {
+        this.y = MoveableObject.GROUND_Y - this.height;
     }
 
     isColliding(moveableObject) {
     return this.x + this.width > moveableObject.x &&
-    this.y + this.height > moveableObject.y &&
-    this.x < moveableObject.x &&
-    this.y < moveableObject.y + moveableObject.height;
+        this.y + this.height > moveableObject.y &&
+        this.x < moveableObject.x + moveableObject.width &&
+        this.y < moveableObject.y + moveableObject.height;
     }
 
     hit() {

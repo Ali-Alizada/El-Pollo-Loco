@@ -10,30 +10,53 @@ class ThrowableObject extends MoveableObject {
     constructor(x, y, direction) {
         super().loadImage(this.IMAGES_BOTTLE_ROTATION[0]);
         this.loadImages(this.IMAGES_BOTTLE_ROTATION);
-
         this.x = x;
         this.y = y;
-        this.width = 50;
-        this.height = 50;
-
-        this.speedY = 25;
+        this.width = 60;
+        this.height = 60;
+        this.speedY = 20;
+        this.speedX = direction === 'right' ? 6 : -6;
         this.applyGravity();
-
-        this.throw(direction);
+        this.throw();
         this.animate();
+        this.checkGroundContact();
     }
 
-    throw(direction) {
-        this.speedX = direction === 'right' ? 10 : -10;
-
-        setInterval(() => {
+    throw() {
+        const interval = setInterval(() => {
+            if (this.markedForDeletion) {
+                clearInterval(interval);
+                return;
+            }
             this.x += this.speedX;
         }, 1000 / 60);
     }
 
     animate() {
         setInterval(() => {
+            if (this.markedForDeletion) return;
             this.playAnimation(this.IMAGES_BOTTLE_ROTATION);
         }, 100);
+    }
+
+    checkGroundContact() {
+    const interval = setInterval(() => {
+        if (this.markedForDeletion) {
+        clearInterval(interval);
+        return;
+        }
+        if (this.y >= 370 && this.speedY <= 0) {
+        this.markedForDeletion = true;
+        if (this.world && !this.hitBoss) { 
+            let splash = new Splash(this.x, this.y);
+            this.world.splashObjects.push(splash);
+            this.world.sound.play("splash");
+        }
+        clearInterval(interval);
+        }
+    }, 1000 / 30);
+    }
+    isAboveGround() {
+        return this.y < 370; 
     }
 }

@@ -12,7 +12,7 @@ class Splash extends Drawableobject {
     currentImage = 0;
     finished = false;
     constructor(x, y) {
-        super().loadImage(this.IMAGES_SPLASH[0]); // ✅ korrekt!
+        super().loadImage(this.IMAGES_SPLASH[0]); 
         this.loadImages(this.IMAGES_SPLASH);
         this.x = x;
         this.y = y;
@@ -23,14 +23,12 @@ class Splash extends Drawableobject {
 
     animate() {
         let i = 0;
-
         let interval = setInterval(() => {
             if (i < this.IMAGES_SPLASH.length) {
-
                 let path = this.IMAGES_SPLASH[i];
                 this.img = this.imgCache[this.IMAGES_SPLASH[i]];
                 i++;
-
+                
             } else {
                 clearInterval(interval);
                 this.finished = true;

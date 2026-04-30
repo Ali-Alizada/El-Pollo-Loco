@@ -20,13 +20,12 @@ class Statusbarcoin extends Drawableobject {
         this.height = 50;  
     }
 
-    setPercentage(percentage) { // set Percentage (50);
-        this.percentage = percentage; // 0 to 5 imges.  
+    setPercentage(percentage) { 
+        this.percentage = percentage; 
         let path = this.IMAGES_COIN[this.resoveImageIndex()];
         this.img = this.imgCache[path]; 
     }
 
-    
     resoveImageIndex() {
           if(this.percentage == 100) {
             return 5;
@@ -42,6 +41,4 @@ class Statusbarcoin extends Drawableobject {
             return 0;
         }
     }
-
-
 }

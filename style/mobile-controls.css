@@ -151,7 +151,6 @@
     display: block;
 }
 
-
 #game-container:fullscreen #ui,
 #game-container:-webkit-full-screen #ui,
 #game-container:-moz-full-screen #ui,
@@ -164,7 +163,6 @@
     pointer-events: none;
 }
 
-
 #game-container:fullscreen .screen,
 #game-container:-webkit-full-screen .screen,
 #game-container:-moz-full-screen .screen,
@@ -175,7 +173,6 @@
 #game-container:fullscreen .bg-img,
 #game-container:-webkit-full-screen .bg-img {
     object-fit: cover;
-    
 }
 
 @keyframes rotate {

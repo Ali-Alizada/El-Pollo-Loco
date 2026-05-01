@@ -15,7 +15,7 @@
     #mobile-controls.active,
     #joystick,
     #joystick.active {
-        display: none !important;
+    display: none !important;
     }
 }
 
@@ -27,6 +27,16 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    }
+
+    .action-controls button {
+        width: 80px;
+        height: 80px;
+    }
+
+    #joystick {
+        width: 110px;
+        height: 110px;
     }
 }
 
@@ -53,7 +63,7 @@
 
     .top-bar {
         top: 12px;
-        right: 20px;
+        right:20px;
         gap: 12px;
     }
 
@@ -91,8 +101,8 @@
     }
 
     #mobile-controls .action-controls button {
-        width: 65px !important;
-        height: 65px !important;
+        width: 75px !important;
+        height: 75px !important;
         font-size: 18px !important;
         display: flex;
         justify-content: center;
@@ -100,8 +110,8 @@
     }
 
     #joystick {
-        width: 80px !important;
-        height: 80px !important;
+        width: 100px !important;
+        height: 100px !important;
     }
 
     #joystick-knob {
@@ -119,7 +129,7 @@
 
     .top-bar {
         top: 16px;
-        right: 20px;
+        right:20px;
         gap: 12px;
     }
 
@@ -155,13 +165,13 @@
 
 
     .action-controls button {
-        width: 70px;
-        height: 70px;
+        width: 75px;
+        height: 75px;
     }
 
     #joystick {
-        width: 80px;
-        height: 80px;
+        width: 95px;
+        height: 95px;
     }
 
     .result-img {
@@ -177,7 +187,7 @@
 
     .top-bar {
         top: 12px;
-        right: 20px;
+        right:20px;
         gap: 10px;
     }
 
@@ -211,8 +221,8 @@
     }
 
     #joystick {
-        width: 70px;
-        height: 70px;
+        width: 75px;
+        height: 75px;
     }
 
     .top-bar img {

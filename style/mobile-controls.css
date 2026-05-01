@@ -1,7 +1,8 @@
 
 #mobile-controls {
     position: absolute;
-    bottom: 15px;
+    bottom: 3vh;
+    padding: 0 3vh;
     left: 0;
     right: 0;
     display: none;
@@ -21,13 +22,14 @@
     display: flex;
     gap: 14px;
     pointer-events: auto;
+    flex-direction: row-reverse;
 }
 
 .action-controls button {
-    width: 65px;
-    height: 65px;
+    width: clamp(45px, 8vh, 70px);
+    height: clamp(45px, 8vh, 70px);
     border-radius: 50%;
-    font-size: 20px;
+    font-size: clamp(12px, 2vh, 18px);
     background: rgba(0, 0, 0, 0.5);
     color: white;
     border: 2px solid #ffb347;
@@ -43,8 +45,8 @@
 
 #joystick {
     position: relative;
-    width: 85px;
-    height: 85px;
+    width: clamp(60px, 10vh, 100px);
+    height: clamp(60px, 10vh, 100px);
     pointer-events: auto;
     display: none;
 }
@@ -64,13 +66,13 @@
 }
 
 #joystick-knob {
-    width: 38px;
-    height: 38px;
+    width: 40%;
+    height: 40%;
+    top: 30%;
+    left: 30%;
     background: #ff7b00;
     border-radius: 50%;
     position: absolute;
-    top: 23.5px;
-    left: 23.5px;
     transition: transform 0.05s linear;
     box-shadow: 0 0 6px rgba(0,0,0,0.5);
 }

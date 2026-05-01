@@ -43,9 +43,11 @@ h1 {
 
 #game-container {
     position: relative;
-    width: 720px;
-    height: 480px;
-    margin: 0 auto;
+    width: 100vw;
+    height: 100vh;
+    max-width: 720px;
+    max-height: 480px;
+    aspect-ratio: 3 / 2; 
 }
 
 canvas {
@@ -75,15 +77,15 @@ canvas {
 
 .top-bar {
     position: absolute;
-    top: 20px;
-    right: 20px;
+    top: 3vh;
+    right: 3vh;
+    gap: 1.5vh;
     display: flex;
-    gap: 10px;
     z-index: 20;
 }
 
 .top-bar img {
-    width: 28px;
+    width: clamp(20px, 3vh, 32px);
     cursor: pointer;
     transition: transform 0.2s ease, filter 0.2s ease;
 }
@@ -173,6 +175,7 @@ canvas {
     padding-top: 70px;
     z-index: 1;
 }
+
 #winScreen .result-img {
     width: 500px;
     height: 290px;
@@ -181,12 +184,23 @@ canvas {
 }
 
 .main-btn {
-    margin-bottom: 330px;
-    padding: 10px 20px;
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 34px;
     font-size: 20px;
-    font-weight: 600;
     cursor: pointer;
     z-index: 2;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.main-btn:hover {
+    transform: translateX(-50%) translateY(-2px);
+}
+
+.main-btn:active {
+    transform: translateX(-50%) translateY(2px);
 }
 
 .btn-row {
@@ -196,6 +210,14 @@ canvas {
     margin-top: 20px;
     flex-wrap: wrap;
     z-index: 2;
+}
+
+.btn-row button:hover {
+    transform: translateY(-2px);
+}
+
+.btn-row button:active {
+    transform: translateY(2px);
 }
 
 button {
@@ -209,16 +231,6 @@ button {
     transition: all 0.15s ease;
     font-family: 'Inter', sans-serif;
     font-weight: bold;
-}
-
-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 0 #c25a00;
-}
-
-button:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px 0 #c25a00;
 }
 
 .btn-row button {

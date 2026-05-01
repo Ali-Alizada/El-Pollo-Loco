@@ -30,6 +30,7 @@
     }
 }
 
+
 @media (max-width: 720px) {
     h1 {
         display: none;
@@ -51,8 +52,9 @@
     }
 
     .top-bar {
-        top: 10px;
-        right: 10px;
+        top: 12px;
+        right: 20px;
+        gap: 12px;
     }
 
     .top-bar img {
@@ -66,13 +68,12 @@
     }
 
     .main-btn {
-        padding: 8px 16px;
-        margin-bottom: 70vh !important;
+        padding: 8px 20px;
         white-space: nowrap;
+
     }
 
     .btn-row {
-        /* flex-direction: column; */
         gap: 12px;
     }
 
@@ -80,6 +81,7 @@
         width: 80%;
         max-height: 60%;
         object-fit: contain;
+        padding-top: 0;
     }
 
     .dialog-box {
@@ -110,6 +112,121 @@
     }
 }
 
+@media (max-height: 440px) and (orientation: landscape) {
+    h1 {
+        display: none;
+    }
+
+    .top-bar {
+        top: 16px;
+        right: 20px;
+        gap: 12px;
+    }
+
+    .top-bar img {
+        width: 24px;
+    }
+
+    .bottom-bar {
+        bottom: 12px;
+        left: 12px;
+        font-size: 12px;
+    }
+
+     .main-btn {
+        padding: 8px 20px;
+        font-size: clamp(20px, 2.5vh, 20px);
+        font-size: 16px;
+    }
+
+    #mobile-controls {
+        bottom: 20px;
+        left: 14px;
+        right: 14px;
+    }
+
+    .action-controls{
+        gap: 24px;
+    }
+    .action-controls button {
+        width: 50px;
+        height: 50px;
+    }
+
+
+    .action-controls button {
+        width: 70px;
+        height: 70px;
+    }
+
+    #joystick {
+        width: 80px;
+        height: 80px;
+    }
+
+    .result-img {
+        width: 80%;
+        max-height: 60%;
+        object-fit: contain;
+        padding-top: 0;
+    }
+
+}
+
+@media (max-height: 375px) and (orientation: landscape) {
+
+    .top-bar {
+        top: 12px;
+        right: 20px;
+        gap: 10px;
+    }
+
+    .bottom-bar {
+        bottom: 12px;
+        left: 12px;
+        font-size: 12px;
+    }
+     .main-btn {
+        padding: 2.5vh 3.5vh;
+        font-size: clamp(16px, 2.5vh, 20px);
+    }
+
+    #mobile-controls {
+        bottom: 20px;
+        left: 14px;
+        right: 14px;
+    }
+
+    .action-controls{
+        gap: 24px;
+    }
+    .action-controls button {
+        width: 50px;
+        height: 50px;
+    }
+
+    .action-controls button {
+        width: 60px;
+        height: 60px;
+    }
+
+    #joystick {
+        width: 70px;
+        height: 70px;
+    }
+
+    .top-bar img {
+        width: 20px;
+    }
+
+    .result-img {
+        width: 80%;
+        max-height: 60%;
+        object-fit: contain;
+        padding-top: 0;
+    }
+}
+
 @media (max-height: 500px) and (max-width: 720px) {
     #game-container {
         padding-bottom: 0;
@@ -128,3 +245,6 @@
         height: 55px;
     }
 }
+
+
+

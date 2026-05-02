@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: models/moveable-object.class.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: models/moveable-object.class.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Represents any movable game object (player, enemies, throwable bottles) with physics,
+ * collision detection, health, and animation capabilities.
+ * @class MoveableObject
+ * @extends Drawableobject
+ */
+class MoveableObject extends Drawableobject {
+
+    static GROUND_Y = 420;
+    speed = 0.15;
+    otherDirection = false;
+    speedY = 0;
+    acceleration = 2.5;
+    energy = 100;
+    lastHit = 0;
+
+    /**
+     * Applies gravity to the object by updating its vertical position and velocity.
+     * The effect is applied continuously via a 25 FPS interval.
+     * @returns {void}
+     */
+    applyGravity() {
+        setInterval(() => {
+            if (this.isAboveGround() || this.speedY > 0) {
+                this.y -= this.speedY;
+                this.speedY -= this.acceleration;
+            }
+        }, 1000 / 25);
+    }
+
+    /**
+     * Checks whether the object is above ground level.
+     * @returns {boolean} True if the bottom of the object is above the ground Y, otherwise false.
+     */
+    isAboveGround() {
+        return (this.y + this.height) &lt; MoveableObject.GROUND_Y;
+    }
+
+    /**
+     * Places the object exactly on the ground (y = GROUND_Y - height).
+     * @returns {void}
+     */
+    setToGround() {
+        this.y = MoveableObject.GROUND_Y - this.height;
+    }
+
+    /**
+     * Checks if this object is colliding with another movable object (axis-aligned bounding box).
+     * @param {MoveableObject} moveableObject - The other object to test against.
+     * @returns {boolean} True if the bounding boxes overlap, otherwise false.
+     */
+    isColliding(moveableObject) {
+        return this.x + this.width > moveableObject.x &amp;&amp;
+            this.y + this.height > moveableObject.y &amp;&amp;
+            this.x &lt; moveableObject.x + moveableObject.width &amp;&amp;
+            this.y &lt; moveableObject.y + moveableObject.height;
+    }
+
+    /**
+     * Reduces the object's energy by 5 points and updates the last hit timestamp.
+     * Energy cannot go below 0.
+     * @returns {void}
+     */
+    hit() {
+        this.energy -= 5;
+        if (this.energy &lt; 0) {
+            this.energy = 0;
+        } else {
+            this.lastHit = new Date().getTime();
+        }
+    }
+
+    /**
+     * Determines whether the object is currently in a hurt state (invincibility frames).
+     * @returns {boolean} True if less than 0.8 seconds have passed since the last hit, otherwise false.
+     */
+    isHurt() {
+        let timepassed = new Date().getTime() - this.lastHit;
+        timepassed = timepassed / 1000;
+        return timepassed &lt; 0.8;
+    }
+
+    /**
+     * Checks if the object is dead (energy equals 0).
+     * @returns {boolean} True if energy is 0, otherwise false.
+     */
+    isDead() {
+        return this.energy == 0;
+    }
+
+    /**
+     * Cycles through an array of images to create an animation.
+     * Uses the `currentImages` counter (inherited from `Drawableobject`) to determine the next frame.
+     * @param {string[]} images - Array of image paths.
+     * @returns {void}
+     */
+    playAnimation(images) {
+        let i = this.currentImages % images.length;
+        let path = images[i];
+        this.img = this.imgCache[path];
+        this.currentImages++;
+    }
+
+    /**
+     * Moves the object to the right by adding its speed to the x-coordinate.
+     * @returns {void}
+     */
+    moveRight() {
+        this.x += this.speed;
+    }
+
+    /**
+     * Moves the object to the left by subtracting its speed from the x-coordinate.
+     * @returns {void}
+     */
+    moveLeft() {
+        this.x -= this.speed;
+    }
+
+    /**
+     * Makes the object jump by setting its upward vertical velocity.
+     * @returns {void}
+     */
+    jump() {
+        this.speedY = 30;
+    }
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Bottle.html">Bottle</a></li><li><a href="Character.html">Character</a></li><li><a href="Chicken.html">Chicken</a></li><li><a href="Cloud.html">Cloud</a></li><li><a href="Coin.html">Coin</a></li><li><a href="Drawableobject.html">Drawableobject</a></li><li><a href="Endboss.html">Endboss</a></li><li><a href="Level.html">Level</a></li><li><a href="MoveableObject.html">MoveableObject</a></li><li><a href="SmallChicken.html">SmallChicken</a></li><li><a href="SoundManager.html">SoundManager</a></li><li><a href="Splash.html">Splash</a></li><li><a href="StatusBarBoss.html">StatusBarBoss</a></li><li><a href="Statusbarbottle.html">Statusbarbottle</a></li><li><a href="Statusbarcoin.html">Statusbarcoin</a></li><li><a href="Statusbarhealth.html">Statusbarhealth</a></li><li><a href="ThrowableObject.html">ThrowableObject</a></li><li><a href="World.html">World</a></li><li><a href="WorldCollisionHandler.html">WorldCollisionHandler</a></li><li><a href="WorldLevelManager.html">WorldLevelManager</a></li><li><a href="WorldLoopManager.html">WorldLoopManager</a></li><li><a href="WorldRenderer.html">WorldRenderer</a></li><li><a href="WorldStateManager.html">WorldStateManager</a></li><li><a href="backgroudObject.html">backgroudObject</a></li></ul><h3>Global</h3><ul><li><a href="global.html#closeDialog">closeDialog</a></li><li><a href="global.html#createBottles">createBottles</a></li><li><a href="global.html#createClouds">createClouds</a></li><li><a href="global.html#createCoins">createCoins</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#joystickTouchEnd">joystickTouchEnd</a></li><li><a href="global.html#joystickTouchMove">joystickTouchMove</a></li><li><a href="global.html#joystickTouchStart">joystickTouchStart</a></li><li><a href="global.html#openDialog">openDialog</a></li><li><a href="global.html#setupFullscreenButton">setupFullscreenButton</a></li><li><a href="global.html#setupGameOverButtons">setupGameOverButtons</a></li><li><a href="global.html#setupInfoPrivacyButtons">setupInfoPrivacyButtons</a></li><li><a href="global.html#setupJoystick">setupJoystick</a></li><li><a href="global.html#setupMobileControls">setupMobileControls</a></li><li><a href="global.html#setupSoundButton">setupSoundButton</a></li><li><a href="global.html#setupStartButton">setupStartButton</a></li><li><a href="global.html#setupUI">setupUI</a></li><li><a href="global.html#showScreen">showScreen</a></li><li><a href="global.html#toggleFullscreen">toggleFullscreen</a></li><li><a href="global.html#updateMobileControls">updateMobileControls</a></li><li><a href="global.html#updateSoundIcon">updateSoundIcon</a></li><li><a href="global.html#updateUIVisibility">updateUIVisibility</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Sat May 02 2026 13:57:37 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

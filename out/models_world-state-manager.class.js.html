@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: models/world-state-manager.class.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: models/world-state-manager.class.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Manages game state (start, restart, back, sound, fullscreen) and UI actions.
+ */
+class WorldStateManager {
+    /**
+     * @param {World} world - The World instance
+     */
+    constructor(world) {
+        this.world = world;
+    }
+
+    /**
+     * Handles clicks on UI elements.
+     * @param {string} action - Action: "start", "restart", "back", "sound", "fullscreen"
+     */
+    handleClick(action) {
+        if (action === "start") this.startGame();
+        else if (action === "restart") this.performRestart();
+        else if (action === "back") this.resetToHome();
+        else if (action === "sound") this.toggleSound();
+        else if (action === "fullscreen") window.toggleFullscreen?.();
+    }
+
+    /** Starts the running game (sets state, starts background music). */
+    startGame() {
+        this.world.gameState = "running";
+        this.world.sound.loop("bgMusic");
+        window.showScreen?.(null);
+    }
+
+    /** Toggles sound on/off and handles background music accordingly. */
+    toggleSound() {
+        this.world.sound.toggle();
+        if (!this.world.sound.muted &amp;&amp; this.world.gameState === "running") {
+            this.world.sound.loop("bgMusic");
+        } else if (this.world.sound.muted) {
+            this.world.sound.stop("bgMusic");
+        }
+        window.updateSoundIcon?.();
+    }
+
+    /** Resets the entire game to its initial state (start screen). */
+    resetToHome() {
+        this.world.clearAllIntervals();
+        this.world.stopAllSounds();
+        this.world.gameState = "start";
+        this.world.loseSoundPlayed = this.world.winSoundPlayed = false;
+        this.world.throwableObjects = [];
+        this.world.splashObjects = [];
+        this.world.levelManager.loadFreshLevel();
+        this.resetCharacter();
+        this.resetStatusBars();
+        this.world.levelManager.setWorld();
+        this.world.loopManager.startGameLoops();
+        window.showScreen?.("startScreen");
+    }
+
+    /** Resets character values (energy, position, invincibility, coins/bottles). */
+    resetCharacter() {
+        const c = this.world.character;
+        c.energy = 100;
+        c.coins = 0;
+        c.bottles = 0;
+        c.x = 120;
+        c.y = 95;
+        c.lastHitTime = 0;
+        c.lastMoveTime = Date.now();
+        c.invincibleUntil = 0;
+        c.spawnProtected = true;
+        setTimeout(() => (c.spawnProtected = false), 2000);
+    }
+
+    /** Resets all status bars to their default values. */
+    resetStatusBars() {
+        this.world.statusBarHealth = new Statusbarhealth();
+        this.world.statusBarCoin = new Statusbarcoin();
+        this.world.statusBarBottle = new Statusbarbottle();
+        this.world.statusBarBoss = new StatusBarBoss();
+        this.world.statusBarHealth.setPercentage(100);
+        this.world.statusBarCoin.setPercentage(0);
+        this.world.statusBarBottle.setPercentage(0);
+        this.world.statusBarBoss.setPercentage(100);
+    }
+
+    /** Performs a complete game restart (from start screen). */
+    performRestart() {
+        this.resetToHome();
+        this.world.gameState = "running";
+        this.world.sound.loop("bgMusic");
+        window.showScreen?.(null);
+    }
+
+    /** Stops all sound effects (walking, snoring, music). */
+    stopAllSounds() {
+        this.world.sound.stop("snoring");
+        this.world.sound.stop("walking");
+        this.world.sound.stop("bgMusic");
+    }
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Bottle.html">Bottle</a></li><li><a href="Character.html">Character</a></li><li><a href="Chicken.html">Chicken</a></li><li><a href="Cloud.html">Cloud</a></li><li><a href="Coin.html">Coin</a></li><li><a href="Drawableobject.html">Drawableobject</a></li><li><a href="Endboss.html">Endboss</a></li><li><a href="Level.html">Level</a></li><li><a href="MoveableObject.html">MoveableObject</a></li><li><a href="SmallChicken.html">SmallChicken</a></li><li><a href="SoundManager.html">SoundManager</a></li><li><a href="Splash.html">Splash</a></li><li><a href="StatusBarBoss.html">StatusBarBoss</a></li><li><a href="Statusbarbottle.html">Statusbarbottle</a></li><li><a href="Statusbarcoin.html">Statusbarcoin</a></li><li><a href="Statusbarhealth.html">Statusbarhealth</a></li><li><a href="ThrowableObject.html">ThrowableObject</a></li><li><a href="World.html">World</a></li><li><a href="WorldCollisionHandler.html">WorldCollisionHandler</a></li><li><a href="WorldLevelManager.html">WorldLevelManager</a></li><li><a href="WorldLoopManager.html">WorldLoopManager</a></li><li><a href="WorldRenderer.html">WorldRenderer</a></li><li><a href="WorldStateManager.html">WorldStateManager</a></li><li><a href="backgroudObject.html">backgroudObject</a></li></ul><h3>Global</h3><ul><li><a href="global.html#closeDialog">closeDialog</a></li><li><a href="global.html#createBottles">createBottles</a></li><li><a href="global.html#createClouds">createClouds</a></li><li><a href="global.html#createCoins">createCoins</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#joystickTouchEnd">joystickTouchEnd</a></li><li><a href="global.html#joystickTouchMove">joystickTouchMove</a></li><li><a href="global.html#joystickTouchStart">joystickTouchStart</a></li><li><a href="global.html#openDialog">openDialog</a></li><li><a href="global.html#setupFullscreenButton">setupFullscreenButton</a></li><li><a href="global.html#setupGameOverButtons">setupGameOverButtons</a></li><li><a href="global.html#setupInfoPrivacyButtons">setupInfoPrivacyButtons</a></li><li><a href="global.html#setupJoystick">setupJoystick</a></li><li><a href="global.html#setupMobileControls">setupMobileControls</a></li><li><a href="global.html#setupSoundButton">setupSoundButton</a></li><li><a href="global.html#setupStartButton">setupStartButton</a></li><li><a href="global.html#setupUI">setupUI</a></li><li><a href="global.html#showScreen">showScreen</a></li><li><a href="global.html#toggleFullscreen">toggleFullscreen</a></li><li><a href="global.html#updateMobileControls">updateMobileControls</a></li><li><a href="global.html#updateSoundIcon">updateSoundIcon</a></li><li><a href="global.html#updateUIVisibility">updateUIVisibility</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Sat May 02 2026 13:57:37 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

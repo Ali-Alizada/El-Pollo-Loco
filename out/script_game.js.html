@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: script/game.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: script/game.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>let canvas;
+let world;
+let keyboard = new Keyboard();
+
+// Joystick global state variables (for extracting the long setupJoystick function)
+let joystickActive = false;
+let joystickCenterX = 0;
+
+/**
+ * Initializes the game, canvas, controls, and world.
+ * @function init
+ * @returns {void}
+ */
+function init() {
+    canvas = document.getElementById("canvas");
+    setupUI();
+    setupJoystick();
+    setupMobileControls();
+    world = new World(canvas, keyboard);
+    window.world = world;
+    updateSoundIcon();
+}
+
+window.addEventListener("keydown", (event) => {
+    if (event.keyCode == 39) keyboard.RIGHT = true;
+    if (event.keyCode == 37) keyboard.LEFT = true;
+    if (event.keyCode == 32) keyboard.SPACE = true;
+    if (event.keyCode == 68) keyboard.D = true;
+});
+
+window.addEventListener("keyup", (event) => {
+    if (event.keyCode == 39) keyboard.RIGHT = false;
+    if (event.keyCode == 37) keyboard.LEFT = false;
+    if (event.keyCode == 32) keyboard.SPACE = false;
+    if (event.keyCode == 68) keyboard.D = false;
+});
+
+/**
+ * Sets up the sound button.
+ * @function setupSoundButton
+ * @returns {void}
+ */
+function setupSoundButton() {
+    document.getElementById("soundBtn").onclick = () => {
+        world.handleClick("sound");
+        updateSoundIcon();
+    };
+}
+
+/**
+ * Sets up the fullscreen button.
+ * @function setupFullscreenButton
+ * @returns {void}
+ */
+function setupFullscreenButton() {
+    document.getElementById("fullscreenBtn").onclick = () => {
+        world.handleClick("fullscreen");
+    };
+}
+
+/**
+ * Sets up the start button.
+ * @function setupStartButton
+ * @returns {void}
+ */
+function setupStartButton() {
+    document.getElementById("startBtn").onclick = () => {
+        world.handleClick("start");
+        showScreen(null);
+    };
+}
+
+/**
+ * Sets up the buttons for win and lose screens (Home &amp; Restart).
+ * @function setupGameOverButtons
+ * @returns {void}
+ */
+function setupGameOverButtons() {
+    document.getElementById("homeWin").onclick = () => {
+        world.handleClick("back");
+        showScreen("startScreen");
+    };
+    document.getElementById("restartWin").onclick = () => {
+        world.handleClick("restart");
+        showScreen(null);
+    };
+    document.getElementById("homeLose").onclick = () => {
+        world.handleClick("back");
+        showScreen("startScreen");
+    };
+    document.getElementById("restartLose").onclick = () => {
+        world.handleClick("restart");
+        showScreen(null);
+    };
+}
+
+/**
+ * Sets up the privacy and info buttons as well as the dialog close.
+ * @function setupInfoPrivacyButtons
+ * @returns {void}
+ */
+function setupInfoPrivacyButtons() {
+    document.getElementById("privacyBtn").onclick = (e) => {
+        e.preventDefault();
+        openDialog("privacy");
+    };
+    document.getElementById("infoBtn").onclick = (e) => {
+        e.preventDefault();
+        openDialog("info");
+    };
+    document.getElementById("closeDialog").onclick = closeDialog;
+    document.getElementById("dialog").onclick = (e) => {
+        if (e.target.id === "dialog") closeDialog();
+    };
+}
+
+/**
+ * Main UI setup function (calls all sub-UI functions).
+ * @function setupUI
+ * @returns {void}
+ */
+function setupUI() {
+    setupSoundButton();
+    setupFullscreenButton();
+    setupStartButton();
+    setupGameOverButtons();
+    setupInfoPrivacyButtons();
+}
+
+/**
+ * Updates the sound icon based on mute status.
+ * @function updateSoundIcon
+ * @returns {void}
+ */
+function updateSoundIcon() {
+    if (!world) return;
+    const soundBtn = document.getElementById("soundBtn");
+    soundBtn.src = world.sound.muted
+        ? "img/8_coin/volume_off.png"
+        : "img/8_coin/volume_on.png";
+}
+
+/**
+ * Toggles fullscreen mode for the game container.
+ * @function toggleFullscreen
+ * @returns {void}
+ */
+function toggleFullscreen() {
+    let container = document.getElementById("game-container");
+    if (!document.fullscreenElement) {
+        container.requestFullscreen();
+    } else {
+        document.exitFullscreen();
+    }
+}
+
+/**
+ * Sets up mobile touch buttons for jump and throw.
+ * @function setupMobileControls
+ * @returns {void}
+ */
+function setupMobileControls() {
+    const btnJump = document.getElementById("btnJump");
+    const btnThrow = document.getElementById("btnThrow");
+
+    btnJump.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        keyboard.SPACE = true;
+    });
+    btnJump.addEventListener("touchend", (e) => {
+        e.preventDefault();
+        keyboard.SPACE = false;
+    });
+    btnThrow.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        keyboard.D = true;
+    });
+    btnThrow.addEventListener("touchend", (e) => {
+        e.preventDefault();
+        keyboard.D = false;
+    });
+}
+
+/**
+ * Shows a specific screen and hides all others.
+ * @param {string|null} id - ID of the screen to show, or null for none.
+ * @returns {void}
+ */
+function showScreen(id) {
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+    if (id) {
+        document.getElementById(id).classList.add("active");
+    }
+    updateUIVisibility(id);
+    updateMobileControls();
+}
+
+/**
+ * Updates the visibility of the bottom bar.
+ * @param {string|null} screenId - Active screen or null.
+ * @returns {void}
+ */
+function updateUIVisibility(screenId) {
+    const bottomBar = document.querySelector(".bottom-bar");
+    bottomBar.style.display = screenId === "startScreen" ? "flex" : "none";
+}
+
+/**
+ * Updates the visibility of mobile controls depending on game state.
+ * @function updateMobileControls
+ * @returns {void}
+ */
+function updateMobileControls() {
+    const controls = document.getElementById("mobile-controls");
+    const joystick = document.getElementById("joystick");
+    if (!world) return;
+    if (world.gameState === "running") {
+        controls.classList.add("active");
+        joystick.classList.add("active");
+    } else {
+        controls.classList.remove("active");
+        joystick.classList.remove("active");
+    }
+}
+
+/**
+ * Touch start handler for the joystick.
+ * @param {TouchEvent} e - Touch event.
+ * @returns {void}
+ */
+function joystickTouchStart(e) {
+    e.preventDefault();
+    joystickActive = true;
+    const base = document.getElementById("joystick-base");
+    const rect = base.getBoundingClientRect();
+    joystickCenterX = rect.left + rect.width / 2;
+}
+
+/**
+ * Touch move handler for the joystick (calculates movement and sets keyboard state).
+ * @param {TouchEvent} e - Touch event.
+ * @returns {void}
+ */
+function joystickTouchMove(e) {
+    if (!joystickActive) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    let dx = touch.clientX - joystickCenterX;
+    const max = 40;
+    dx = Math.max(-max, Math.min(max, dx));
+    const knob = document.getElementById("joystick-knob");
+    knob.style.transform = `translate(${dx}px, 0px)`;
+    const axisX = dx / max;
+    keyboard.axisX = axisX;
+    keyboard.LEFT = axisX &lt; -0.3;
+    keyboard.RIGHT = axisX > 0.3;
+}
+
+/**
+ * Touch end handler for the joystick (resets joystick).
+ * @param {TouchEvent} e - Touch event.
+ * @returns {void}
+ */
+function joystickTouchEnd(e) {
+    e.preventDefault();
+    joystickActive = false;
+    const knob = document.getElementById("joystick-knob");
+    knob.style.transform = `translate(0px, 0px)`;
+    keyboard.axisX = 0;
+    keyboard.LEFT = false;
+    keyboard.RIGHT = false;
+}
+
+/**
+ * Sets up the joystick (binds touch events).
+ * @function setupJoystick
+ * @returns {void}
+ */
+function setupJoystick() {
+    const base = document.getElementById("joystick-base");
+    base.addEventListener("touchstart", joystickTouchStart);
+    base.addEventListener("touchmove", joystickTouchMove);
+    base.addEventListener("touchend", joystickTouchEnd);
+}
+
+/**
+ * Opens the dialog (privacy or info).
+ * @param {string} type - Type of dialog: "privacy" or "info".
+ * @returns {void}
+ */
+function openDialog(type) {
+    const dialog = document.getElementById("dialog");
+    dialog.classList.add("show");
+    document.querySelectorAll(".dialog-content").forEach(el => el.classList.remove("active"));
+    if (type === "privacy") {
+        document.getElementById("privacyContent").classList.add("active");
+    }
+    if (type === "info") {
+        document.getElementById("infoContent").classList.add("active");
+    }
+}
+
+/**
+ * Closes the opened dialog.
+ * @function closeDialog
+ * @returns {void}
+ */
+function closeDialog() {
+    document.getElementById("dialog").classList.remove("show");
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Bottle.html">Bottle</a></li><li><a href="Character.html">Character</a></li><li><a href="Chicken.html">Chicken</a></li><li><a href="Cloud.html">Cloud</a></li><li><a href="Coin.html">Coin</a></li><li><a href="Drawableobject.html">Drawableobject</a></li><li><a href="Endboss.html">Endboss</a></li><li><a href="Level.html">Level</a></li><li><a href="MoveableObject.html">MoveableObject</a></li><li><a href="SmallChicken.html">SmallChicken</a></li><li><a href="SoundManager.html">SoundManager</a></li><li><a href="Splash.html">Splash</a></li><li><a href="StatusBarBoss.html">StatusBarBoss</a></li><li><a href="Statusbarbottle.html">Statusbarbottle</a></li><li><a href="Statusbarcoin.html">Statusbarcoin</a></li><li><a href="Statusbarhealth.html">Statusbarhealth</a></li><li><a href="ThrowableObject.html">ThrowableObject</a></li><li><a href="World.html">World</a></li><li><a href="WorldCollisionHandler.html">WorldCollisionHandler</a></li><li><a href="WorldLevelManager.html">WorldLevelManager</a></li><li><a href="WorldLoopManager.html">WorldLoopManager</a></li><li><a href="WorldRenderer.html">WorldRenderer</a></li><li><a href="WorldStateManager.html">WorldStateManager</a></li><li><a href="backgroudObject.html">backgroudObject</a></li></ul><h3>Global</h3><ul><li><a href="global.html#closeDialog">closeDialog</a></li><li><a href="global.html#createBottles">createBottles</a></li><li><a href="global.html#createClouds">createClouds</a></li><li><a href="global.html#createCoins">createCoins</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#joystickTouchEnd">joystickTouchEnd</a></li><li><a href="global.html#joystickTouchMove">joystickTouchMove</a></li><li><a href="global.html#joystickTouchStart">joystickTouchStart</a></li><li><a href="global.html#openDialog">openDialog</a></li><li><a href="global.html#setupFullscreenButton">setupFullscreenButton</a></li><li><a href="global.html#setupGameOverButtons">setupGameOverButtons</a></li><li><a href="global.html#setupInfoPrivacyButtons">setupInfoPrivacyButtons</a></li><li><a href="global.html#setupJoystick">setupJoystick</a></li><li><a href="global.html#setupMobileControls">setupMobileControls</a></li><li><a href="global.html#setupSoundButton">setupSoundButton</a></li><li><a href="global.html#setupStartButton">setupStartButton</a></li><li><a href="global.html#setupUI">setupUI</a></li><li><a href="global.html#showScreen">showScreen</a></li><li><a href="global.html#toggleFullscreen">toggleFullscreen</a></li><li><a href="global.html#updateMobileControls">updateMobileControls</a></li><li><a href="global.html#updateSoundIcon">updateSoundIcon</a></li><li><a href="global.html#updateUIVisibility">updateUIVisibility</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Sat May 02 2026 13:57:37 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

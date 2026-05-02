@@ -12,6 +12,11 @@ class ImageManager {
         };
     }
 
+    /**
+     * Loads an image from the specified file path.
+     * @param {string} path - The file path of the image to load.
+     * @returns {HTMLImageElement} A new Image object with the src set to the given path.
+     */
     load(path) {
         let img = new Image();
         img.src = path;
@@ -20,6 +25,11 @@ class ImageManager {
         return img;
     }
 
+    /**
+     * Retrieves a previously loaded image by its key name.
+     * @param {string} name - The key of the image (e.g., 'start', 'win', 'soundOn').
+     * @returns {HTMLImageElement} The image object associated with the given key.
+     */
     get(name) {
         return this.images[name];
     }

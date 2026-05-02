@@ -117,8 +117,8 @@
     #joystick-knob {
         width: 35px !important;
         height: 35px !important;
-        top: 21.5px !important;
-        left: 21.5px !important;
+        top: 30px !important;
+        left: 30px !important;
     }
 }
 
@@ -129,7 +129,7 @@
 
     .top-bar {
         top: 16px;
-        right:20px;
+        right:18px;
         gap: 12px;
     }
 
@@ -163,7 +163,6 @@
         height: 50px;
     }
 
-
     .action-controls button {
         width: 75px;
         height: 75px;
@@ -187,7 +186,7 @@
 
     .top-bar {
         top: 12px;
-        right:20px;
+        right:16px;
         gap: 10px;
     }
 
@@ -202,22 +201,30 @@
     }
 
     #mobile-controls {
-        bottom: 20px;
-        left: 14px;
-        right: 14px;
+        bottom: 16px;
+        left: 5px;
+        right: 5px;
     }
 
     .action-controls{
         gap: 24px;
     }
-    .action-controls button {
-        width: 50px;
-        height: 50px;
-    }
 
     .action-controls button {
         width: 60px;
         height: 60px;
+    }
+
+    #joystick-base{
+        width: 85px;
+        height: 85px;
+    }
+
+    #joystick-knob {
+        width: 35px !important;
+        height: 35px !important;
+        top: 25px !important;
+        left: 25px !important;
     }
 
     #joystick {

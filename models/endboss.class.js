@@ -1,5 +1,4 @@
 class Endboss extends MoveableObject {
-
     height = 400;
     width = 280;
     y = 65;
@@ -50,6 +49,12 @@ class Endboss extends MoveableObject {
         'img/4_enemie_boss_chicken/5_dead/G26.png'
     ];
 
+    /**
+     * Creates an instance of the Endboss (final boss chicken).
+     * Loads all animation image sequences, sets initial position, speed, and state.
+     * The endboss starts in walking state and will become aggressive when the character comes close.
+     * @constructor
+     */
     constructor() {
         super().loadImage(this.IMAGES_WALKING[0]);
         this.loadImages(this.IMAGES_WALKING);
@@ -64,101 +69,198 @@ class Endboss extends MoveableObject {
         this.aggressiveRange = 300;
         this.otherDirection = true;
         this.normalY = 65;
-        this.flyingY = 40;   
+        this.flyingY = 40;
         this.currentState = "walk";
     }
 
+    /**
+     * Starts both movement and animation intervals for the endboss.
+     * Clears any existing intervals before starting new ones.
+     * @returns {void}
+     */
     animate() {
-    if (this.moveInterval) clearInterval(this.moveInterval);
-    if (this.animationInterval) clearInterval(this.animationInterval);
-
-    this.moveInterval = setInterval(() => {
-        if (!this.world || this.isDead()) return;
-        this.checkPhase();
-        const characterX = this.world.character.x;
-        const distance = Math.abs(characterX - this.x);
-        const alertRange = this.alertRange || 650;
-
-        let currentSpeed = (distance < this.aggressiveRange) ? this.aggressiveSpeed : this.speed;
-
-    if (distance < alertRange) {
-        if (characterX < this.x) {
-            this.x -= currentSpeed;
-            this.otherDirection = false;
-        } else {
-            this.x += currentSpeed;
-            this.otherDirection = true;
-        }
-    } else {
-        if (this.x < this.startX) {
-            this.x += currentSpeed;
-            this.otherDirection = true;
-        }
+        this.clearIntervals();
+        this.startMoveInterval();
+        this.startAnimationInterval();
     }
 
-        if (this.isAttacking()) {
-            let floatOffset = Math.sin(Date.now() / 200) * 5;
-            this.y = this.flyingY + floatOffset;
-        } else {
-            this.y = this.normalY;
-    }
-    }, 1000 / 25);
-
-
-    this.animationInterval = setInterval(() => {
-        if (!this.world) return;
-        if (this.isDead()) {
-            this.playAnimation(this.IMAGES_DEAD);
-            return;
-        }
-
-        let newState = "";
-        if (this.isHurt()) newState = "hurt";
-        else if (this.isAttacking()) newState = "attack";
-        else if (Math.abs(this.world.character.x - this.x) < (this.alertRange || 650)) newState = "walk";
-        else newState = "idle";
-
-        if (this.currentState !== newState) {
-            this.currentImages = 0;
-            this.currentState = newState;
-        }
-
-        switch (newState) {
-            case "hurt": this.playAnimation(this.IMAGES_HURT); break;
-            case "attack": this.playAnimation(this.IMAGES_ATTACK); break;
-            case "walk": this.playAnimation(this.IMAGES_WALKING); break;
-            case "idle": this.playAnimation(this.IMAGES_ALERT); break;
-        }
-    }, 300);
-    }
-
+    /**
+     * Checks if the endboss should transition to phase 2 (low health).
+     * Phase 2 increases speed and alert range.
+     * @returns {void}
+     */
     checkPhase() {
         if (this.energy < 30 && this.phase === 1) {
             this.enterPhase2();
         }
     }
 
+    /**
+     * Transitions the endboss to phase 2, boosting speed and alert range.
+     * @returns {void}
+     */
     enterPhase2() {
         this.phase = 2;
-        this.speed = 3;       
-        this.alertRange = 800; 
-
+        this.speed = 3;
+        this.alertRange = 800;
     }
 
+    /**
+     * Calculates the absolute distance between the endboss and the character.
+     * @returns {number} Distance in pixels.
+     */
     distanceToCharacter() {
         return Math.abs(this.world.character.x - this.x);
     }
 
+    /**
+     * Determines if the endboss is currently attacking based on distance to character.
+     * @returns {boolean} True if within aggressive range.
+     */
     isAttacking() {
         return this.distanceToCharacter() < this.aggressiveRange;
     }
 
+    /**
+     * Checks if the endboss is in a hurt state (recently hit).
+     * @returns {boolean} True if hurt within the last 0.5 seconds.
+     */
     isHurt() {
         let timepassed = new Date().getTime() - this.lastHit;
         return timepassed / 1000 < 0.5;
     }
 
+    /**
+     * Checks if the endboss has no energy left (dead).
+     * @returns {boolean} True if energy <= 0.
+     */
     isDead() {
         return this.energy <= 0;
+    }
+
+    /**
+     * Clears any existing movement and animation intervals.
+     * @returns {void}
+     */
+    clearIntervals() {
+        if (this.moveInterval) clearInterval(this.moveInterval);
+        if (this.animationInterval) clearInterval(this.animationInterval);
+    }
+
+    /**
+     * Starts the interval that updates the endboss's movement and position.
+     * @returns {void}
+     */
+    startMoveInterval() {
+        this.moveInterval = setInterval(() => {
+            if (!this.world || this.isDead()) return;
+            this.movementStep();
+        }, 1000 / 25);
+    }
+
+    /**
+     * Starts the interval that updates the endboss's animation state.
+     * @returns {void}
+     */
+    startAnimationInterval() {
+        this.animationInterval = setInterval(() => {
+            if (!this.world) return;
+            this.updateAnimationStep();
+        }, 300);
+    }
+
+    /**
+     * Performs a single movement step: updates phase, horizontal position and vertical offset.
+     * @returns {void}
+     */
+    movementStep() {
+        this.checkPhase();
+        const characterX = this.world.character.x;
+        const distance = Math.abs(characterX - this.x);
+        const alertRange = this.alertRange || 650;
+        const currentSpeed = this.getMovementSpeed(distance);
+        this.updatePosition(characterX, distance, alertRange, currentSpeed);
+        this.updateYFloating();
+    }
+
+    /**
+     * Returns the current speed (normal or aggressive) based on distance to character.
+     * @param {number} distance - Distance to the character in pixels.
+     * @returns {number} Movement speed.
+     */
+    getMovementSpeed(distance) {
+        return (distance < this.aggressiveRange) ? this.aggressiveSpeed : this.speed;
+    }
+
+    /**
+     * Updates the endboss's x-position and direction based on character proximity.
+     * @param {number} characterX - Character's x-coordinate.
+     * @param {number} distance - Distance to character.
+     * @param {number} alertRange - Range in which the endboss becomes alert.
+     * @param {number} currentSpeed - Speed to use for movement.
+     * @returns {void}
+     */
+    updatePosition(characterX, distance, alertRange, currentSpeed) {
+        if (distance < alertRange) {
+            if (characterX < this.x) {
+                this.x -= currentSpeed;
+                this.otherDirection = false;
+            } else {
+                this.x += currentSpeed;
+                this.otherDirection = true;
+            }
+        } else if (this.x < this.startX) {
+            this.x += currentSpeed;
+            this.otherDirection = true;
+        }
+    }
+
+    /**
+     * Updates the vertical position: floating effect when attacking, otherwise normal Y.
+     * @returns {void}
+     */
+    updateYFloating() {
+        if (this.isAttacking()) {
+            let floatOffset = Math.sin(Date.now() / 200) * 5;
+            this.y = this.flyingY + floatOffset;
+        } else {
+            this.y = this.normalY;
+        }
+    }
+
+    /**
+     * Determines the current state of the endboss based on health and distance to character.
+     * @returns {string} State name: 'dead', 'hurt', 'attack', 'walk', or 'idle'.
+     */
+    getCurrentState() {
+        if (this.isDead()) return 'dead';
+        if (this.isHurt()) return 'hurt';
+        if (this.isAttacking()) return 'attack';
+        if (Math.abs(this.world.character.x - this.x) < (this.alertRange || 650)) return 'walk';
+        return 'idle';
+    }
+
+    /**
+     * Performs one animation step: resolves the new state and plays the corresponding animation.
+     * Resets image index on state change.
+     * @returns {void}
+     */
+    updateAnimationStep() {
+        let newState = this.getCurrentState();
+        if (newState === 'dead') {
+            this.playAnimation(this.IMAGES_DEAD);
+            return;
+        }
+        if (this.currentState !== newState) {
+            this.currentImages = 0;
+            this.currentState = newState;
+        }
+        const animations = {
+            hurt: this.IMAGES_HURT,
+            attack: this.IMAGES_ATTACK,
+            walk: this.IMAGES_WALKING,
+            idle: this.IMAGES_ALERT
+        };
+        this.playAnimation(animations[newState]);
     }
 }

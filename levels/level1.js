@@ -1,42 +1,60 @@
-    function createClouds() {
-        const clouds = [];
-        const startX = -200;      
-        const endX = 3200;
-        const step = 600;         
-        for (let x = startX; x < endX; x += step) {
-            const offsetX = Math.random() * 150;
-            clouds.push(new Cloud(x + offsetX));
-        }
-        return clouds;
+/**
+ * Creates an array of Cloud objects positioned horizontally at regular intervals.
+ * Clouds are placed from x = -200 to 3200 with a step of 600 pixels.
+ * Each cloud receives a random horizontal offset within its step to create variation.
+ * @returns {Cloud[]} Array of Cloud instances.
+ */
+function createClouds() {
+    const clouds = [];
+    const startX = -200;
+    const endX = 3200;
+    const step = 600;
+    for (let x = startX; x < endX; x += step) {
+        const offsetX = Math.random() * 150;
+        clouds.push(new Cloud(x + offsetX));
     }
-   
-   function createCoins() {
-        let coins = [];
-        for (let i = 0; i < 20; i++) {
-            coins.push(
+    return clouds;
+}
+
+/**
+ * Creates an array of 20 Coin objects with random positions.
+ * X position ranges between 200 and 2200 pixels.
+ * Y position ranges between 60 and 360 pixels.
+ * @returns {Coin[]} Array of Coin instances.
+ */
+function createCoins() {
+    let coins = [];
+    for (let i = 0; i < 20; i++) {
+        coins.push(
             new Coin(
                 200 + Math.random() * 2000,
                 60 + Math.random() * 300
-                )
-            );
-        }
-        return coins;
+            )
+        );
     }
+    return coins;
+}
 
-    function createBottles() {
-        let bottles = [];
-        for (let i = 0; i < 20; i++) {
-            bottles.push(
+/**
+ * Creates an array of 20 Bottle objects with random X positions.
+ * X position ranges between 200 and 2200 pixels.
+ * Y position is fixed at 330 pixels (ground level).
+ * @returns {Bottle[]} Array of Bottle instances.
+ */
+function createBottles() {
+    let bottles = [];
+    for (let i = 0; i < 20; i++) {
+        bottles.push(
             new Bottle(
                 200 + Math.random() * 2000,
                 330
-                )
-            );
-        }
-        return bottles;
+            )
+        );
     }
+    return bottles;
+}
 
-    const level1 = new Level(
+const level1 = new Level(
     [
         new Chicken(),
         new Chicken(),
@@ -50,11 +68,11 @@
         new Endboss()
     ],
 
-     createClouds(),   
+    createClouds(),
 
     [
         new backgroudObject('img/5_background/layers/air.png', -720),
-        new backgroudObject('img/5_background/layers/3_third_layer/full.png', -720), 
+        new backgroudObject('img/5_background/layers/3_third_layer/full.png', -720),
         new backgroudObject('img/5_background/layers/2_second_layer/2.png', -720),
         new backgroudObject('img/5_background/layers/1_first_layer/2.png', -720),
 
@@ -64,26 +82,26 @@
         new backgroudObject('img/5_background/layers/1_first_layer/1.png', 0),
 
         new backgroudObject('img/5_background/layers/air.png', 720),
-        new backgroudObject('img/5_background/layers/3_third_layer/full.png', 720), 
+        new backgroudObject('img/5_background/layers/3_third_layer/full.png', 720),
         new backgroudObject('img/5_background/layers/2_second_layer/2.png', 720),
         new backgroudObject('img/5_background/layers/1_first_layer/2.png', 720),
 
-        new backgroudObject('img/5_background/layers/air.png', 720*2),
-        new backgroudObject('img/5_background/layers/3_third_layer/1.png', 720*2),
-        new backgroudObject('img/5_background/layers/2_second_layer/1.png', 720*2),
-        new backgroudObject('img/5_background/layers/1_first_layer/1.png', 720*2),
+        new backgroudObject('img/5_background/layers/air.png', 720 * 2),
+        new backgroudObject('img/5_background/layers/3_third_layer/1.png', 720 * 2),
+        new backgroudObject('img/5_background/layers/2_second_layer/1.png', 720 * 2),
+        new backgroudObject('img/5_background/layers/1_first_layer/1.png', 720 * 2),
 
-        new backgroudObject('img/5_background/layers/air.png', 720*3),
-        new backgroudObject('img/5_background/layers/3_third_layer/full.png', 720*3), 
-        new backgroudObject('img/5_background/layers/2_second_layer/2.png', 720*3),
-        new backgroudObject('img/5_background/layers/1_first_layer/2.png', 720*3),
+        new backgroudObject('img/5_background/layers/air.png', 720 * 3),
+        new backgroudObject('img/5_background/layers/3_third_layer/full.png', 720 * 3),
+        new backgroudObject('img/5_background/layers/2_second_layer/2.png', 720 * 3),
+        new backgroudObject('img/5_background/layers/1_first_layer/2.png', 720 * 3),
 
-        new backgroudObject('img/5_background/layers/air.png', 720*4),
-        new backgroudObject('img/5_background/layers/3_third_layer/1.png', 720*4), 
-        new backgroudObject('img/5_background/layers/2_second_layer/1.png', 720*4),
-        new backgroudObject('img/5_background/layers/1_first_layer/1.png', 720*4),
+        new backgroudObject('img/5_background/layers/air.png', 720 * 4),
+        new backgroudObject('img/5_background/layers/3_third_layer/1.png', 720 * 4),
+        new backgroudObject('img/5_background/layers/2_second_layer/1.png', 720 * 4),
+        new backgroudObject('img/5_background/layers/1_first_layer/1.png', 720 * 4),
     ],
 
     createCoins(),
-    createBottles() 
+    createBottles()
 );

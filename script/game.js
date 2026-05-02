@@ -2,12 +2,20 @@ let canvas;
 let world;
 let keyboard = new Keyboard();
 
+// Joystick global state variables (for extracting the long setupJoystick function)
+let joystickActive = false;
+let joystickCenterX = 0;
+
+/**
+ * Initializes the game, canvas, controls, and world.
+ * @function init
+ * @returns {void}
+ */
 function init() {
     canvas = document.getElementById("canvas");
     setupUI();
     setupJoystick();
     setupMobileControls();
-
     world = new World(canvas, keyboard);
     window.world = world;
     updateSoundIcon();
@@ -27,67 +35,116 @@ window.addEventListener("keyup", (event) => {
     if (event.keyCode == 68) keyboard.D = false;
 });
 
-function setupUI() {
+/**
+ * Sets up the sound button.
+ * @function setupSoundButton
+ * @returns {void}
+ */
+function setupSoundButton() {
     document.getElementById("soundBtn").onclick = () => {
         world.handleClick("sound");
         updateSoundIcon();
     };
+}
 
+/**
+ * Sets up the fullscreen button.
+ * @function setupFullscreenButton
+ * @returns {void}
+ */
+function setupFullscreenButton() {
     document.getElementById("fullscreenBtn").onclick = () => {
         world.handleClick("fullscreen");
     };
+}
 
+/**
+ * Sets up the start button.
+ * @function setupStartButton
+ * @returns {void}
+ */
+function setupStartButton() {
     document.getElementById("startBtn").onclick = () => {
         world.handleClick("start");
         showScreen(null);
     };
+}
 
+/**
+ * Sets up the buttons for win and lose screens (Home & Restart).
+ * @function setupGameOverButtons
+ * @returns {void}
+ */
+function setupGameOverButtons() {
     document.getElementById("homeWin").onclick = () => {
         world.handleClick("back");
         showScreen("startScreen");
     };
-
     document.getElementById("restartWin").onclick = () => {
         world.handleClick("restart");
         showScreen(null);
     };
-
     document.getElementById("homeLose").onclick = () => {
         world.handleClick("back");
         showScreen("startScreen");
     };
-
     document.getElementById("restartLose").onclick = () => {
         world.handleClick("restart");
         showScreen(null);
     };
+}
 
+/**
+ * Sets up the privacy and info buttons as well as the dialog close.
+ * @function setupInfoPrivacyButtons
+ * @returns {void}
+ */
+function setupInfoPrivacyButtons() {
     document.getElementById("privacyBtn").onclick = (e) => {
         e.preventDefault();
         openDialog("privacy");
     };
-
     document.getElementById("infoBtn").onclick = (e) => {
         e.preventDefault();
         openDialog("info");
     };
-
     document.getElementById("closeDialog").onclick = closeDialog;
-
     document.getElementById("dialog").onclick = (e) => {
         if (e.target.id === "dialog") closeDialog();
     };
 }
 
+/**
+ * Main UI setup function (calls all sub-UI functions).
+ * @function setupUI
+ * @returns {void}
+ */
+function setupUI() {
+    setupSoundButton();
+    setupFullscreenButton();
+    setupStartButton();
+    setupGameOverButtons();
+    setupInfoPrivacyButtons();
+}
+
+/**
+ * Updates the sound icon based on mute status.
+ * @function updateSoundIcon
+ * @returns {void}
+ */
 function updateSoundIcon() {
     if (!world) return;
-
     const soundBtn = document.getElementById("soundBtn");
     soundBtn.src = world.sound.muted
         ? "img/8_coin/volume_off.png"
         : "img/8_coin/volume_on.png";
 }
 
+/**
+ * Toggles fullscreen mode for the game container.
+ * @function toggleFullscreen
+ * @returns {void}
+ */
 function toggleFullscreen() {
     let container = document.getElementById("game-container");
     if (!document.fullscreenElement) {
@@ -97,6 +154,11 @@ function toggleFullscreen() {
     }
 }
 
+/**
+ * Sets up mobile touch buttons for jump and throw.
+ * @function setupMobileControls
+ * @returns {void}
+ */
 function setupMobileControls() {
     const btnJump = document.getElementById("btnJump");
     const btnThrow = document.getElementById("btnThrow");
@@ -105,28 +167,27 @@ function setupMobileControls() {
         e.preventDefault();
         keyboard.SPACE = true;
     });
-
     btnJump.addEventListener("touchend", (e) => {
         e.preventDefault();
         keyboard.SPACE = false;
     });
-
     btnThrow.addEventListener("touchstart", (e) => {
         e.preventDefault();
         keyboard.D = true;
     });
-
     btnThrow.addEventListener("touchend", (e) => {
         e.preventDefault();
         keyboard.D = false;
     });
 }
 
+/**
+ * Shows a specific screen and hides all others.
+ * @param {string|null} id - ID of the screen to show, or null for none.
+ * @returns {void}
+ */
 function showScreen(id) {
-    document.querySelectorAll(".screen").forEach(s =>
-        s.classList.remove("active")
-    );
-
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
     if (id) {
         document.getElementById(id).classList.add("active");
     }
@@ -134,18 +195,25 @@ function showScreen(id) {
     updateMobileControls();
 }
 
+/**
+ * Updates the visibility of the bottom bar.
+ * @param {string|null} screenId - Active screen or null.
+ * @returns {void}
+ */
 function updateUIVisibility(screenId) {
     const bottomBar = document.querySelector(".bottom-bar");
-    bottomBar.style.display =
-        screenId === "startScreen" ? "flex" : "none";
+    bottomBar.style.display = screenId === "startScreen" ? "flex" : "none";
 }
 
+/**
+ * Updates the visibility of mobile controls depending on game state.
+ * @function updateMobileControls
+ * @returns {void}
+ */
 function updateMobileControls() {
     const controls = document.getElementById("mobile-controls");
     const joystick = document.getElementById("joystick");
-
     if (!world) return;
-
     if (world.gameState === "running") {
         controls.classList.add("active");
         joystick.classList.add("active");
@@ -155,66 +223,88 @@ function updateMobileControls() {
     }
 }
 
-function setupJoystick() {
+/**
+ * Touch start handler for the joystick.
+ * @param {TouchEvent} e - Touch event.
+ * @returns {void}
+ */
+function joystickTouchStart(e) {
+    e.preventDefault();
+    joystickActive = true;
     const base = document.getElementById("joystick-base");
-    const knob = document.getElementById("joystick-knob");
-
-    let active = false;
-    let centerX;
-
-    base.addEventListener("touchstart", (e) => {
-        e.preventDefault();
-        active = true;
-        const rect = base.getBoundingClientRect();
-        centerX = rect.left + rect.width / 2;
-    });
-
-    base.addEventListener("touchmove", (e) => {
-        if (!active) return;
-        e.preventDefault();
-
-        const touch = e.touches[0];
-        let dx = touch.clientX - centerX;
-
-        const max = 40;
-        dx = Math.max(-max, Math.min(max, dx));
-
-        knob.style.transform = `translate(${dx}px, 0px)`;
-
-        keyboard.axisX = dx / max;
-        keyboard.LEFT = keyboard.axisX < -0.3;
-        keyboard.RIGHT = keyboard.axisX > 0.3;
-    });
-
-    base.addEventListener("touchend", (e) => {
-        e.preventDefault();
-        active = false;
-
-        knob.style.transform = `translate(0px, 0px)`;
-
-        keyboard.axisX = 0;
-        keyboard.LEFT = false;
-        keyboard.RIGHT = false;
-    });
+    const rect = base.getBoundingClientRect();
+    joystickCenterX = rect.left + rect.width / 2;
 }
 
+/**
+ * Touch move handler for the joystick (calculates movement and sets keyboard state).
+ * @param {TouchEvent} e - Touch event.
+ * @returns {void}
+ */
+function joystickTouchMove(e) {
+    if (!joystickActive) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    let dx = touch.clientX - joystickCenterX;
+    const max = 40;
+    dx = Math.max(-max, Math.min(max, dx));
+    const knob = document.getElementById("joystick-knob");
+    knob.style.transform = `translate(${dx}px, 0px)`;
+    const axisX = dx / max;
+    keyboard.axisX = axisX;
+    keyboard.LEFT = axisX < -0.3;
+    keyboard.RIGHT = axisX > 0.3;
+}
+
+/**
+ * Touch end handler for the joystick (resets joystick).
+ * @param {TouchEvent} e - Touch event.
+ * @returns {void}
+ */
+function joystickTouchEnd(e) {
+    e.preventDefault();
+    joystickActive = false;
+    const knob = document.getElementById("joystick-knob");
+    knob.style.transform = `translate(0px, 0px)`;
+    keyboard.axisX = 0;
+    keyboard.LEFT = false;
+    keyboard.RIGHT = false;
+}
+
+/**
+ * Sets up the joystick (binds touch events).
+ * @function setupJoystick
+ * @returns {void}
+ */
+function setupJoystick() {
+    const base = document.getElementById("joystick-base");
+    base.addEventListener("touchstart", joystickTouchStart);
+    base.addEventListener("touchmove", joystickTouchMove);
+    base.addEventListener("touchend", joystickTouchEnd);
+}
+
+/**
+ * Opens the dialog (privacy or info).
+ * @param {string} type - Type of dialog: "privacy" or "info".
+ * @returns {void}
+ */
 function openDialog(type) {
     const dialog = document.getElementById("dialog");
     dialog.classList.add("show");
-
-    document.querySelectorAll(".dialog-content").forEach(el =>
-        el.classList.remove("active")
-    );
-
+    document.querySelectorAll(".dialog-content").forEach(el => el.classList.remove("active"));
     if (type === "privacy") {
         document.getElementById("privacyContent").classList.add("active");
     }
-
     if (type === "info") {
         document.getElementById("infoContent").classList.add("active");
     }
 }
 
+/**
+ * Closes the opened dialog.
+ * @function closeDialog
+ * @returns {void}
+ */
 function closeDialog() {
     document.getElementById("dialog").classList.remove("show");
 }

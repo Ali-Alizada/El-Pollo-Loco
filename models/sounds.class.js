@@ -1,7 +1,11 @@
+/**
+ * Manages all game sounds, including playback, looping, muting, and persistence of mute state via localStorage.
+ * @class SoundManager
+ */
 class SoundManager {
     constructor() {
         const savedMuted = localStorage.getItem('soundMuted');
-        this.muted = savedMuted === 'true'; 
+        this.muted = savedMuted === 'true';
 
         this.sounds = {
             coin: new Audio('assets/audio/collectibles/collectSound.wav'),
@@ -25,6 +29,11 @@ class SoundManager {
         });
     }
 
+    /**
+     * Plays a sound effect once (if not muted). Resets playback position to start.
+     * @param {string} name - The key of the sound in the `sounds` object (e.g., 'coin', 'hit').
+     * @returns {void}
+     */
     play(name) {
         if (!this.muted) {
             this.sounds[name].currentTime = 0;
@@ -32,6 +41,11 @@ class SoundManager {
         }
     }
 
+    /**
+     * Stops a playing sound and resets its playback position to the beginning.
+     * @param {string} name - The key of the sound in the `sounds` object.
+     * @returns {void}
+     */
     stop(name) {
         if (this.sounds[name]) {
             this.sounds[name].pause();
@@ -39,6 +53,11 @@ class SoundManager {
         }
     }
 
+    /**
+     * Starts playing a sound in a continuous loop (if not muted).
+     * @param {string} name - The key of the sound in the `sounds` object.
+     * @returns {void}
+     */
     loop(name) {
         if (!this.muted) {
             this.sounds[name].loop = true;
@@ -46,6 +65,10 @@ class SoundManager {
         }
     }
 
+    /**
+     * Toggles the mute state, persists it to localStorage, and stops all currently playing sounds if muted.
+     * @returns {void}
+     */
     toggle() {
         this.muted = !this.muted;
         localStorage.setItem('soundMuted', this.muted);

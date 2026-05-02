@@ -78,7 +78,12 @@ class Character extends MoveableObject {
     ];
 
     world;
-    constructor() {     
+   /**
+     * Creates a new Character (Pepe) instance.
+     * Loads all animation images, sets up gravity, collision offsets, and spawn protection.
+     * @constructor
+     */
+    constructor() {
         super().loadImage('img/2_character_pepe/2_walk/W-21.png');
         this.loadImages(this.IMAGES_IDLE);
         this.loadImages(this.IMAGES_LONG_IDLE);
@@ -86,29 +91,62 @@ class Character extends MoveableObject {
         this.loadImages(this.IMAGES_JUMPING);
         this.loadImages(this.IMAGES_HURT);
         this.loadImages(this.IMAGES_DEAD);
-        this.setToGround();   
-        this.applyGravity(); 
+        this.setToGround();
+        this.applyGravity();
         this.invincibleUntil = 0;
         this.spawnProtected = true;
-        this.hasKilledChicken = false;  
-        this.offsetX = 30; 
-        this.offsetWidth = 60; 
+        this.hasKilledChicken = false;
+        this.offsetX = 30;
+        this.offsetWidth = 60;
         this.offsetY = 10;
         this.offsetHeight = 20;
         setTimeout(() => this.spawnProtected = false, 2000);
-        } 
+    }
 
-        animate() {
+    /**
+     * Starts both movement and animation intervals for the character.
+     * Clears any existing intervals before starting new ones.
+     * @returns {void}
+     */
+    animate() {
+        this.clearCharacterIntervals();
+        this.startMovementInterval();
+        this.startAnimationInterval();
+    }
+
+    /**
+     * Clears movement and animation intervals if they exist.
+     * @returns {void}
+     */
+    clearCharacterIntervals() {
         if (this.moveAnimationInterval) clearInterval(this.moveAnimationInterval);
         if (this.stateAnimationInterval) clearInterval(this.stateAnimationInterval);
+    }
 
+    /**
+     * Starts the interval that handles movement, input, and camera.
+     * @returns {void}
+     */
+    startMovementInterval() {
         this.moveAnimationInterval = setInterval(() => {
-        if (!this.world || this.world.gameState !== 'running') {
-            this.world?.sound.stop('walking');
-            this.world?.sound.stop('snoring');
-            return;
-        }
+            if (!this.world || this.world.gameState !== 'running') {
+                this.world?.sound.stop('walking');
+                this.world?.sound.stop('snoring');
+                return;
+            }
+            this.handleMovementInput();
+            this.handleWalkingSound();
+            this.handleJumpInput();
+            this.world.camera_x = -this.x + 100;
+        }, 1000 / 60);
+    }
 
+    /**
+     * Processes left/right movement keys and updates position.
+     * Also updates lastMoveTime when moving.
+     * @returns {void}
+     */
+    handleMovementInput() {
         if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
             this.moveRight();
             this.otherDirection = false;
@@ -118,7 +156,13 @@ class Character extends MoveableObject {
             this.otherDirection = true;
             this.lastMoveTime = Date.now();
         }
+    }
 
+    /**
+     * Plays or stops the walking sound based on whether the character is moving on ground.
+     * @returns {void}
+     */
+    handleWalkingSound() {
         const isMoving = (this.world.keyboard.RIGHT || this.world.keyboard.LEFT);
         if (isMoving && !this.isAboveGround()) {
             if (!this.walkingSoundPlaying) {
@@ -129,50 +173,76 @@ class Character extends MoveableObject {
             this.world.sound.stop('walking');
             this.walkingSoundPlaying = false;
         }
+    }
 
+    /**
+     * Triggers a jump when the SPACE key is pressed and the character is on the ground.
+     * @returns {void}
+     */
+    handleJumpInput() {
         if (this.world.keyboard.SPACE && !this.isAboveGround()) {
             this.jump();
             this.lastMoveTime = Date.now();
         }
-            this.world.camera_x = -this.x + 100;
-        }, 1000 / 60);
+    }
 
+        /**
+     * Starts the interval that handles state-based animation (idle, walking, jumping, hurt, dead).
+     * @returns {void}
+     */
+    startAnimationInterval() {
         this.stateAnimationInterval = setInterval(() => {
-        if (this.isAboveGround()) {
-            if (!this.jumpAnimationPlayed) {
-                this.currentImages = 0;
-                this.jumpAnimationPlayed = true;
-            }
-            this.playAnimation(this.IMAGES_JUMPING);
-            if (this.currentImages >= this.IMAGES_JUMPING.length) {
-                this.currentImages = this.IMAGES_JUMPING.length - 1;
-            }
-            return;
-        } else {
-            this.jumpAnimationPlayed = false;
-        }
+            if (this.isAboveGround()) {
+                this.playJumpAnimation();
+            } else {
+                // Boden erreicht → Sprung-Animation zurücksetzen
+                this.jumpAnimationPlayed = false;
 
-        if (this.isDead()) {
+                if (this.isDead()) {
+                    this.playDeadAnimation();
+                } else if (this.isHurt()) {
+                    this.playAnimation(this.IMAGES_HURT);
+                } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+                    this.playAnimation(this.IMAGES_WALKING);
+                } else {
+                    this.handleIdleAnimation();
+                }
+            }
+        }, 50);
+    }
+
+    /**
+     * Plays the jumping animation and resets the image index on the first frame.
+     * @returns {void}
+     */
+    playJumpAnimation() {
+        if (!this.jumpAnimationPlayed) {
+            this.currentImages = 0;
+            this.jumpAnimationPlayed = true;
+        }
+        this.playAnimation(this.IMAGES_JUMPING);
+        // Optional: Verhindert Überlauf – bleibt auf letztem Bild
+        if (this.currentImages >= this.IMAGES_JUMPING.length) {
+            this.currentImages = this.IMAGES_JUMPING.length - 1;
+        }
+    }
+
+    /**
+     * Plays the death animation and transitions the game state to "lose" when finished.
+     * @returns {void}
+     */
+    playDeadAnimation() {
         this.playAnimation(this.IMAGES_DEAD);
         if (this.currentImages >= this.IMAGES_DEAD.length && this.world.gameState === "dying") {
             this.world.gameState = "lose";
         }
-        return;
-        }   
+    }
 
-        if (this.isHurt()) {
-            this.playAnimation(this.IMAGES_HURT);
-            return;
-        }
-        if (this.isAboveGround()) {
-            this.playAnimation(this.IMAGES_JUMPING);
-            return;
-        }
-        if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-            this.playAnimation(this.IMAGES_WALKING);
-            return;
-        }
-
+    /**
+     * Handles idle (short idle) and long idle (snoring) animations based on time since last movement.
+     * @returns {void}
+     */
+    handleIdleAnimation() {
         const idleTime = Date.now() - this.lastMoveTime;
         if (idleTime > 3000) {
             this.playAnimation(this.IMAGES_LONG_IDLE);
@@ -185,47 +255,59 @@ class Character extends MoveableObject {
             this.world.sound.stop('snoring');
             this.snoringSoundPlaying = false;
         }
-        }, 50);
-        }
+    }
 
-            resetIdleTimer() {
+    /**
+     * Resets the idle timer and stops snoring sound.
+     * Called when the character moves or interacts.
+     * @returns {void}
+     */
+    resetIdleTimer() {
         this.lastMoveTime = Date.now();
         if (this.world) {
             this.world.sound.stop('snoring');
             this.snoringSoundPlaying = false;
         }
-        }
+    }
 
-        updateMovement() {
+    /**
+     * Updates character position based on keyboard axis input.
+     * @deprecated (Legacy method, kept for compatibility)
+     * @returns {void}
+     */
+    updateMovement() {
         if (this.world.keyboard.axisX !== 0) {
             this.x += this.world.keyboard.axisX * 5;
         }
+        if (this.world.keyboard.RIGHT) this.moveRight();
+        if (this.world.keyboard.LEFT) this.moveLeft();
+    }
 
-        fallback (keyboard)
-        if (this.world.keyboard.RIGHT) {
-            this.moveRight();
-        }
-
-        if (this.world.keyboard.LEFT) {
-            this.moveLeft();
-        }
-        }
-
-        hit() {
+    /**
+     * Reduces character health by 5 when hit, respecting invincibility frames and cooldown.
+     * Sets invincibility for 1 second and records hit timestamp.
+     * @returns {void}
+     */
+    hit() {
         let now = Date.now();
-        if (now < this.invincibleUntil) return; 
+        if (now < this.invincibleUntil) return;
         if (now - this.lastHitTime > this.hitCooldown) {
-            this.energy -= 5; 
-        if (this.energy < 0) this.energy = 0;
+            this.energy -= 5;
+            if (this.energy < 0) this.energy = 0;
             this.lastHitTime = now;
             this.lastHit = now;
-            this.invincibleUntil = now + 1000; 
-            }
-            }
+            this.invincibleUntil = now + 1000;
+        }
+    }
 
-        jump() {
-            this.speedY = 30;
-            this.hasKilledChicken = false;   
-            this.world.sound.play('jump');  
-            }
+    /**
+     * Makes the character jump upward (sets vertical speed) and plays jump sound.
+     * Resets the flag that indicates a chicken was killed.
+     * @returns {void}
+     */
+    jump() {
+        this.speedY = 30;
+        this.hasKilledChicken = false;
+        this.world.sound.play('jump');
+    }
 }

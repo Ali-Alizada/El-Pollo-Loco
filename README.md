@@ -1,5 +1,5 @@
 <strong> 🐔 El Pollo Loco </strong>
-<p align="center"> <img src="img/9_intro_outro_screens/start/startscreen_2.png" width="720" alt="El Pollo Loco Start Screen"> </p> <p align="center"> <strong>A 2D browser game built with Object-Oriented JavaScript and the HTML5 Canvas API</strong> </p> <p align="center"> <a href="#"> Play Live</a> • <a href="#features"> Features</a> • <a href="#architecture"> Architecture</a> • <a href="#getting-started"> Setup</a> </p> <br> <br>
+<p align="center"> <img src="img/9_intro_outro_screens/start/readme-bg.png" width="100%" alt="El Pollo Loco Start Screen"> </p> <p align="center"> <strong>A 2D browser game built with Object-Oriented JavaScript and the HTML5 Canvas API</strong> </p> <p align="center"> <a href="#"> Play Live</a> • <a href="#features"> Features</a> • <a href="#architecture"> Architecture</a> • <a href="#getting-started"> Setup</a> </p> <br> <br>
 
 <strong> Game Overview : </strong>
 <br> 

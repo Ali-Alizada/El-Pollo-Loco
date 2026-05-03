@@ -22,6 +22,20 @@ class Bottle extends MoveableObject {
     }
 
     /**
+     * Calculates the collision hitbox of the bottle.
+     * The hitbox is slightly smaller than the visible image to make collisions more forgiving.
+     * @returns {{x: number, y: number, width: number, height: number}} An object defining the hitbox position and size.
+     */
+    getHitbox() {
+        return {
+            x: this.x + 15,
+            y: this.y + 10,
+            width: this.width - 30,
+            height: this.height - 20
+        };
+    }
+
+    /**
      * Starts a repeating animation that cycles through the bottle's images.
      * The animation runs every 400 milliseconds.
      * @returns {void}

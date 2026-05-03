@@ -113,6 +113,19 @@ class Character extends MoveableObject {
         this.startMovementInterval();
         this.startAnimationInterval();
     }
+    /**
+     * Calculates the foot-level hitbox of the object, typically used for ground collision or stomping mechanics.
+     * The hitbox is positioned at the bottom of the object, spanning most of its width.
+     * @returns {{x: number, y: number, width: number, height: number}} An object defining the foot hitbox position and size.
+     */
+    getFootHitbox() {
+        return {
+            x: this.x + 10,           
+            y: this.y + this.height - 25,
+            width: this.width - 20,    
+            height: 25                 
+        };
+    }
 
     /**
      * Clears movement and animation intervals if they exist.
@@ -307,7 +320,9 @@ class Character extends MoveableObject {
      */
     jump() {
         this.speedY = 30;
-        this.hasKilledChicken = false;
+        this.hasKilledChicken = false; 
+        this.isJumping = true;
+        this.currentImages = 0;
         this.world.sound.play('jump');
     }
 }

@@ -35,7 +35,6 @@ class Chicken extends MoveableObject {
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_DEAD);
         this.walkRange = 300 + Math.random() * 300;
-
         setTimeout(() => {
             this.animate();
         }, Math.random() * 1000);
@@ -63,6 +62,20 @@ class Chicken extends MoveableObject {
                 this.playAnimation(this.IMAGES_WALKING);
             }
         }, 200);
+    }
+
+    /**
+     * Calculates the foot-level hitbox of the object, typically used for ground collision or stomping mechanics.
+     * The hitbox is positioned at the bottom of the object, spanning most of its width.
+     * @returns {{x: number, y: number, width: number, height: number}} An object defining the foot hitbox position and size.
+     */
+    getHitbox() {
+        return {
+            x: this.x + 5,
+            y: this.y + 5,
+            width: this.width - 10,
+            height: this.height - 5
+        };
     }
 
     /**

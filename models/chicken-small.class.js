@@ -30,6 +30,20 @@ class SmallChicken extends Chicken {
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_DEAD);
     }
+    
+    /**
+     * Calculates the foot-level hitbox of the object, typically used for ground collision or stomping mechanics.
+     * The hitbox is positioned at the bottom of the object, spanning most of its width.
+     * @returns {{x: number, y: number, width: number, height: number}} An object defining the foot hitbox position and size.
+     */
+    getHitbox() {
+        return {
+            x: this.x + 5,
+            y: this.y + 5,
+            width: this.width - 10,
+            height: this.height - 5
+        };
+    }
 
     /**
      * Overrides the base Chicken die method.

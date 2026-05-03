@@ -18,19 +18,51 @@ class WorldCollisionHandler {
         this.cleanupMarkedObjects();
     }
 
-    /** Checks collisions between character and enemies (chickens/boss). */
+    /**
+     * Checks collisions between character and enemies (chickens/boss).
+     * Uses helpers to handle jump‑kills and damage application.
+     * @returns {void}
+     */
     checkEnemyCollisions() {
         this.world.level.enemies.forEach(enemy => {
-            if (!this.world.character.isColliding(enemy)) return;
-            if (enemy instanceof Chicken && this.isJumpingOn(enemy) && !this.world.character.hasKilledChicken) {
-                enemy.die();
-                this.world.character.hasKilledChicken = true;
-            } else if (Date.now() >= (this.world.character.invincibleUntil || 0) && !this.world.character.spawnProtected) {
-                this.world.character.hit();
-                this.world.statusBarHealth.setPercentage(this.world.character.energy);
-                if (this.world.character.energy <= 0) this.setLoseState();
-            }
+            const character = this.world.character;
+            if (!character.isColliding(enemy)) return;
+            if (this._handleJumpOnChicken(character, enemy)) return;
+            this._applyCharacterHit(character);
         });
+    }
+
+    /**
+     * Handles the case where the character jumps on a chicken enemy.
+     * @param {Character} character - The game character.
+     * @param {Chicken} enemy - The chicken enemy.
+     * @returns {boolean} True if the jump kill was executed, false otherwise.
+     * @private
+     */
+    _handleJumpOnChicken(character, enemy) {
+        if (!(enemy instanceof Chicken) || !this.isJumpingOn(enemy)) return false;
+        if (!character.hasKilledChicken) {
+            enemy.die();
+            character.hasKilledChicken = true;
+            const fallSpeed = Math.abs(character.speedY);
+            character.speedY = Math.min(20, Math.max(12, fallSpeed * 0.6));
+            character.invincibleUntil = Date.now() + 200;
+        }
+        return true;
+    }
+
+    /**
+     * Applies damage to the character if not invincible and not spawn‑protected.
+     * @param {Character} character - The game character.
+     * @returns {void}
+     * @private
+     */
+    _applyCharacterHit(character) {
+        if (Date.now() >= (character.invincibleUntil || 0) && !character.spawnProtected) {
+            character.hit();
+            this.world.statusBarHealth.setPercentage(character.energy);
+            if (character.energy <= 0) this.setLoseState();
+        }
     }
 
     /** Sets game state to "dying" and plays game over sound. */
@@ -46,25 +78,57 @@ class WorldCollisionHandler {
     /** Collects coins on collision and updates the coin status bar. */
     checkCoinCollisions() {
         this.world.level.coins.forEach((coin, idx) => {
-            if (this.world.character.isColliding(coin) && this.world.character.coins < 10) {
-                this.world.character.coins++;
-                this.world.statusBarCoin.setPercentage(this.world.character.coins * 10);
+            const character = this.world.character;
+            if (character.isColliding(coin) && character.isAboveGround() && character.coins < 10) {
+                character.coins++;
+                this.world.statusBarCoin.setPercentage(character.coins * 10);
                 this.world.sound.play("coin");
                 this.world.level.coins.splice(idx, 1);
             }
         });
     }
 
-    /** Collects bottles (items) on collision and updates the bottle status bar. */
+    /**
+     * Collects bottles (items) on collision and updates the bottle status bar.
+     * Uses a precise hitbox check via a helper.
+     * @returns {void}
+     */
     checkBottleCollisions() {
         this.world.level.bottles.forEach((bottle, idx) => {
-            if (this.world.character.isColliding(bottle) && this.world.character.bottles < 5) {
-                this.world.character.bottles++;
-                this.world.statusBarBottle.setPercentage(this.world.character.bottles * 20);
+            const char = this.world.character;
+            if (this._isCollectibleCollision(char, bottle) && char.bottles < 5) {
+                char.bottles++;
+                this.world.statusBarBottle.setPercentage(char.bottles * 20);
                 this.world.sound.play("bottle");
                 this.world.level.bottles.splice(idx, 1);
             }
         });
+    }
+
+    /**
+     * Checks if the character can collect a bottle using a custom, tighter hitbox.
+     * @param {Character} character - The game character.
+     * @param {Bottle} bottle - The bottle object.
+     * @returns {boolean} True if character collides with bottle within the custom bounds.
+     * @private
+     */
+    _isCollectibleCollision(character, bottle) {
+        const charBox = {
+            x: character.x + 20,
+            y: character.y + 20,
+            width: character.width - 40,
+            height: character.height - 40
+        };
+        const bottleBox = {
+            x: bottle.x + 15,
+            y: bottle.y + 10,
+            width: bottle.width - 30,
+            height: bottle.height - 20
+        };
+        return (charBox.x < bottleBox.x + bottleBox.width &&
+                charBox.x + charBox.width > bottleBox.x &&
+                charBox.y < bottleBox.y + bottleBox.height &&
+                charBox.y + charBox.height > bottleBox.y);
     }
 
     /** Checks collisions between thrown bottles and the end boss. */
@@ -125,13 +189,13 @@ class WorldCollisionHandler {
      * @returns {boolean} true if landing on enemy successfully
      */
     isJumpingOn(enemy) {
-        if (this.world.character.speedY >= 0) return false;
         const char = this.world.character;
-        const charBottom = char.y + char.height;
-        const touching = charBottom >= enemy.y - 5 && charBottom <= enemy.y + 30;
-        if (!touching) return false;
-        const overlap = Math.min(char.x + char.width, enemy.x + enemy.width) - Math.max(char.x, enemy.x);
-        return overlap > 20;
+        if (char.speedY >= 0) return false;
+        const foot = char.getFootHitbox();
+        const e = enemy.getHitbox();
+        const verticalHit = foot.y + foot.height >= e.y - 10 && foot.y <= e.y + e.height;
+        const horizontalHit = foot.x < e.x + e.width && foot.x + foot.width > e.x;
+        return verticalHit && horizontalHit;
     }
 
     /**

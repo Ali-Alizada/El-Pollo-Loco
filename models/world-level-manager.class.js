@@ -28,10 +28,10 @@ class WorldLevelManager {
      */
     createEnemies() {
         return [
-            new Chicken(800), new Chicken(1050), new Chicken(1400), new Chicken(1750),
+            new Chicken(800), new Chicken(1050), new Chicken(1400),
             new SmallChicken(850), new SmallChicken(1000), new SmallChicken(1300),
             new SmallChicken(1550), new SmallChicken(1800), new SmallChicken(2400),
-            new SmallChicken(2800), new SmallChicken(2950), new Endboss()
+            new Endboss()
         ];
     }
 

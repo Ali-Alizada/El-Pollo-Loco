@@ -22,13 +22,17 @@ class WorldRenderer {
 
     /** Shows the appropriate start/end screen based on game state. */
     drawByGameState() {
-        if (this.world.gameState === "running" || this.world.gameState === "dying") {
-            this.drawGameObjects();
-            window.showScreen?.(null);
-        } else if (this.world.gameState === "start") window.showScreen?.("startScreen");
-        else if (this.world.gameState === "win") window.showScreen?.("winScreen");
-        else if (this.world.gameState === "lose") window.showScreen?.("loseScreen");
+    if (this.world.gameState === "running" || this.world.gameState === "dying" || this.world.gameState === "winPending") {
+        this.drawGameObjects();
+        window.showScreen?.(null);
+    } else if (this.world.gameState === "start") {
+        window.showScreen?.("startScreen");
+    } else if (this.world.gameState === "win") {
+        window.showScreen?.("winScreen");
+    } else if (this.world.gameState === "lose") {
+        window.showScreen?.("loseScreen");
     }
+}
 
     /** Draws all game-relevant objects (status bars, character, enemies, items). */
     drawGameObjects() {

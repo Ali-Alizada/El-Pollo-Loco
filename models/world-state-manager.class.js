@@ -96,4 +96,27 @@ class WorldStateManager {
         this.world.sound.stop("walking");
         this.world.sound.stop("bgMusic");
     }
+
+    initiateWin() {
+        if (this.world.gameState !== "running") return;
+        this.world.gameState = "winPending";
+        this.world.sound.stop("walking");
+        setTimeout(() => {
+            if (this.world.gameState === "winPending") {
+                this.completeWin();
+            }
+        }, 1000);
+    }
+
+    completeWin() {
+        if (this.world.gameState !== "winPending") return;
+        this.world.gameState = "win";
+        this.world.stopAllSounds();
+        if (!this.world.winSoundPlayed) {
+            this.world.sound.play("win");
+            this.world.winSoundPlayed = true;
+        }
+        this.world.clearAllIntervals();
+        window.showScreen?.("winScreen");
+    }
 }

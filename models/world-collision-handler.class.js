@@ -131,24 +131,32 @@ class WorldCollisionHandler {
                 charBox.y + charBox.height > bottleBox.y);
     }
 
-    /** Checks collisions between thrown bottles and the end boss. */
+        /**
+     * Überprüft Kollisionen zwischen geworfenen Flaschen und dem Endboss.
+     * Bei einem Treffer wird der Boss getroffen. Wenn der Boss dadurch stirbt,
+     * wird der Sieg verzögert (nach 1 Sekunde), damit die Todesanimation abgespielt werden kann.
+     */
     checkThrowableCollisions() {
         for (let i = 0; i < this.world.throwableObjects.length; i++) {
             const bottle = this.world.throwableObjects[i];
             let hitBoss = false;
+
             for (let enemy of this.world.level.enemies) {
                 if (enemy instanceof Endboss && bottle.isColliding(enemy)) {
                     this.handleBossHit(enemy, bottle);
                     hitBoss = true;
+                    if (enemy.energy <= 0 && this.world.gameState === "running") {
+                        this.world.stateManager.initiateWin();
+                    }
                     break;
                 }
             }
+
             if (hitBoss) {
                 this.world.throwableObjects.splice(i, 1);
                 i--;
             }
         }
-        if (this.world.boss?.energy <= 0 && this.world.gameState !== "win") this.setWinState();
     }
 
     /**
@@ -163,17 +171,6 @@ class WorldCollisionHandler {
         this.world.sound.play("splash");
         this.world.splashObjects.push(new Splash(enemy.x + enemy.width / 15, enemy.y + enemy.height / 3));
         bottle.hitBoss = true;
-    }
-
-    /** Sets game state to "win" and plays victory sound. */
-    setWinState() {
-        this.world.gameState = "win";
-        this.world.stopAllSounds();
-        if (!this.world.winSoundPlayed) {
-            this.world.sound.play("win");
-            this.world.winSoundPlayed = true;
-        }
-        this.world.clearAllIntervals();
     }
 
     /** Removes all objects marked for deletion (bottles, splashes, defeated enemies). */

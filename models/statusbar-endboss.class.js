@@ -47,7 +47,7 @@ class StatusBarBoss extends Drawableobject {
      */
     setPercentage(percentage) {
         this.percentage = percentage;
-        if (percentage <= 20) {
+        if (percentage == 10) {
             this.isLow = true;
             this.startBlinking();
         }
@@ -75,10 +75,10 @@ class StatusBarBoss extends Drawableobject {
      */
     resolveImageIndex() {
         if (this.percentage == 100) return 5;
-        if (this.percentage > 80) return 4;
-        if (this.percentage > 60) return 3;
-        if (this.percentage > 40) return 2;
-        if (this.percentage > 20) return 1;
+        if (this.percentage >= 80) return 4;
+        if (this.percentage >= 60) return 3;
+        if (this.percentage >= 40) return 2;
+        if (this.percentage >= 20) return 1;
         return 0;
     }
 }

@@ -1,7 +1,7 @@
 class Character extends MoveableObject {
     height = 250;
     width = 120;
-    speed = 15; 
+    speed = 12; 
     coins = 0;
     bottles = 0;
     lastHitTime = 0;
@@ -100,6 +100,9 @@ class Character extends MoveableObject {
         this.offsetWidth = 60;
         this.offsetY = 10;
         this.offsetHeight = 20;
+
+        this.deathLoopCount = 0;
+        this.maxDeathLoops = 3;
         setTimeout(() => this.spawnProtected = false, 2000);
     }
 
@@ -221,8 +224,9 @@ class Character extends MoveableObject {
                     this.handleIdleAnimation();
                 }
             }
-        }, 50);
+        }, 75);
     }
+    
 
     /**
      * Plays the jumping animation and resets the image index on the first frame.
@@ -245,10 +249,16 @@ class Character extends MoveableObject {
      * @returns {void}
      */
     playDeadAnimation() {
-        this.playAnimation(this.IMAGES_DEAD);
-        if (this.currentImages >= this.IMAGES_DEAD.length && this.world.gameState === "dying") {
+    this.playAnimation(this.IMAGES_DEAD);
+    
+    if (this.currentImages >= this.IMAGES_DEAD.length) {
+        this.deathLoopCount++;
+        if (this.deathLoopCount < this.maxDeathLoops) {
+            this.currentImages = 0;
+        } else if (this.world.gameState === "dying") {
             this.world.gameState = "lose";
         }
+    }
     }
 
     /**
@@ -257,7 +267,7 @@ class Character extends MoveableObject {
      */
     handleIdleAnimation() {
         const idleTime = Date.now() - this.lastMoveTime;
-        if (idleTime > 3000) {
+        if (idleTime > 10000) {
             this.playAnimation(this.IMAGES_LONG_IDLE);
             if (!this.snoringSoundPlaying) {
                 this.world.sound.loop('snoring');
@@ -308,8 +318,10 @@ class Character extends MoveableObject {
             this.energy -= 5;
             if (this.energy < 0) this.energy = 0;
             this.lastHitTime = now;
-            this.lastHit = now;
+            this.lastHit = now;               
             this.invincibleUntil = now + 1000;
+            this.lastMoveTime = now;          
+            this.currentImages = 0;          
         }
     }
 

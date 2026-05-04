@@ -71,6 +71,7 @@ class Endboss extends MoveableObject {
         this.normalY = 65;
         this.flyingY = 40;
         this.currentState = "walk";
+        this.isDeadState = false;
     }
 
     /**
@@ -128,6 +129,17 @@ class Endboss extends MoveableObject {
     isHurt() {
         let timepassed = new Date().getTime() - this.lastHit;
         return timepassed / 1000 < 0.5;
+    }
+
+    hit() {
+    if (this.isDeadState) return;
+    this.energy -= 10;
+    
+    if (this.energy < 0) this.energy = 0;
+    this.lastHit = Date.now();
+    if (this.energy === 0) {
+        this.isDeadState = true;
+    }
     }
 
     /**

@@ -10,7 +10,7 @@ class SmallChicken extends Chicken {
         super();
         this.height = 60;
         this.width = 50;
-        this.y = 360;
+        this.y = 355;
         this.x = (x !== null) ? x : 700 + Math.random() * 800;
         this.speed = 0.2 + Math.random() * 0.3;
 
@@ -56,17 +56,9 @@ class SmallChicken extends Chicken {
         this.speed = 0;
         if (this.world) {
             this.world.sound.play("smallChicken");
+            for (let i = 0; i < 1; i++)
+                this.world.spawnBottle(this.x + Math.random() * 50, this.y);
         }
-        if (this.world) {
-            for (let i = 0; i < 2; i++) {
-                this.world.spawnBottle(
-                    this.x + Math.random() * 50,
-                    this.y
-                );
-            }
-        }
-        setTimeout(() => {
-            this.markedForDeletion = true;
-        }, 1000);
+        setTimeout(() => this.markedForDeletion = true, 1000);
     }
 }

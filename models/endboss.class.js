@@ -72,6 +72,12 @@ class Endboss extends MoveableObject {
         this.flyingY = 40;
         this.currentState = "walk";
         this.isDeadState = false;
+        this.offset = {       
+            top: 60,
+            bottom: 20,
+            left: 40,
+            right: 40
+        };
     }
 
     /**
@@ -124,6 +130,7 @@ class Endboss extends MoveableObject {
 
     /**
      * Checks if the endboss is in a hurt state (recently hit).
+     * Overrides MoveableObject.isHurt with a shorter cooldown (0.5 seconds).
      * @returns {boolean} True if hurt within the last 0.5 seconds.
      */
     isHurt() {
@@ -131,15 +138,21 @@ class Endboss extends MoveableObject {
         return timepassed / 1000 < 0.5;
     }
 
+    /**
+     * Reduces the endboss's energy by 10 points when hit.
+     * If energy drops to zero, marks the boss as dead.
+     * Prevents multiple hits after death.
+     * @returns {void}
+     */
     hit() {
-    if (this.isDeadState) return;
-    this.energy -= 10;
-    
-    if (this.energy < 0) this.energy = 0;
-    this.lastHit = Date.now();
-    if (this.energy === 0) {
-        this.isDeadState = true;
-    }
+        if (this.isDeadState) return;
+        this.energy -= 10;
+        
+        if (this.energy < 0) this.energy = 0;
+        this.lastHit = Date.now();
+        if (this.energy === 0) {
+            this.isDeadState = true;
+        }
     }
 
     /**
@@ -259,20 +272,9 @@ class Endboss extends MoveableObject {
      */
     updateAnimationStep() {
         let newState = this.getCurrentState();
-        if (newState === 'dead') {
-            this.playAnimation(this.IMAGES_DEAD);
-            return;
-        }
-        if (this.currentState !== newState) {
-            this.currentImages = 0;
-            this.currentState = newState;
-        }
-        const animations = {
-            hurt: this.IMAGES_HURT,
-            attack: this.IMAGES_ATTACK,
-            walk: this.IMAGES_WALKING,
-            idle: this.IMAGES_ALERT
-        };
-        this.playAnimation(animations[newState]);
+        if (newState === 'dead') return this.playAnimation(this.IMAGES_DEAD);
+        if (this.currentState !== newState) this.currentImages = 0, this.currentState = newState;
+        const anims = {hurt: this.IMAGES_HURT, attack: this.IMAGES_ATTACK, walk: this.IMAGES_WALKING, idle: this.IMAGES_ALERT};
+        this.playAnimation(anims[newState]);
     }
 }

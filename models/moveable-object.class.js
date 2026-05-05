@@ -13,10 +13,18 @@ class MoveableObject extends Drawableobject {
     acceleration = 2.5;
     energy = 100;
     lastHit = 0;
+    offset = {        
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0
+    };
 
     /**
-     * Applies gravity to the object by updating its vertical position and velocity.
-     * The effect is applied continuously via a 25 FPS interval.
+     * Applies gravity to the object, updating its vertical position and speed.
+     * Runs continuously on an interval (25 fps). If the object is above ground or moving upward,
+     * it decreases speedY due to acceleration (gravity). When on ground, resets speedY and snaps
+     * the character to the ground.
      * @returns {void}
      */
     applyGravity() {
@@ -25,6 +33,11 @@ class MoveableObject extends Drawableobject {
             if (this.isAboveGround() || this.speedY > 0) {
                 this.y -= this.speedY;
                 this.speedY -= this.acceleration;
+            } else {
+                this.speedY = 0;
+                if (this.constructor.name === 'Character') {
+                    this.setToGround();
+                }
             }
         }, 1000 / 25);
     }
@@ -46,15 +59,15 @@ class MoveableObject extends Drawableobject {
     }
 
     /**
-     * Checks if this object is colliding with another movable object (axis-aligned bounding box).
-     * @param {MoveableObject} moveableObject - The other object to test against.
-     * @returns {boolean} True if the bounding boxes overlap, otherwise false.
+     * Checks if this object collides with another movable object using hitbox offsets.
+     * @param {MoveableObject} mo - The other movable object to check collision with.
+     * @returns {boolean} True if the hitboxes overlap, false otherwise.
      */
-    isColliding(moveableObject) {
-        return this.x + this.width > moveableObject.x &&
-            this.y + this.height > moveableObject.y &&
-            this.x < moveableObject.x + moveableObject.width &&
-            this.y < moveableObject.y + moveableObject.height;
+    isColliding(mo) {
+        return this.x + this.width - this.offset.right > mo.x + mo.offset.left &&
+               this.y + this.height - this.offset.bottom > mo.y + mo.offset.top &&
+               this.x + this.offset.left < mo.x + mo.width - mo.offset.right &&
+               this.y + this.offset.top < mo.y + mo.height - mo.offset.bottom;
     }
 
     /**
@@ -123,6 +136,6 @@ class MoveableObject extends Drawableobject {
      * @returns {void}
      */
     jump() {
-        this.speedY = 30;
+        this.speedY = 35;
     }
 }

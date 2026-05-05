@@ -34,6 +34,12 @@ class ThrowableObject extends MoveableObject {
         this.height = 60;
         this.speedY = 20;
         this.speedX = direction === 'right' ? 6 : -6;
+        this.offset = {          
+            top: 10,
+            bottom: 10,
+            left: 15,
+            right: 15
+        };
         this.applyGravity();
         this.throw();
         this.animate();
@@ -72,16 +78,12 @@ class ThrowableObject extends MoveableObject {
      */
     checkGroundContact() {
         const interval = setInterval(() => {
-            if (this.markedForDeletion) {
-                clearInterval(interval);
-                return;
-            }
+            if (this.markedForDeletion) return clearInterval(interval);
             if (this.hitBoss) return;
             if (this.y >= 370 && this.speedY <= 0) {
                 this.markedForDeletion = true;
-                if (this.world && !this.hitBoss) {
-                    let splash = new Splash(this.x, this.y);
-                    this.world.splashObjects.push(splash);
+                if (this.world) {
+                    this.world.splashObjects.push(new Splash(this.x, this.y));
                     this.world.sound.play("splash");
                 }
                 clearInterval(interval);

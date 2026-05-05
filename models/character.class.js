@@ -96,13 +96,14 @@ class Character extends MoveableObject {
         this.invincibleUntil = 0;
         this.spawnProtected = true;
         this.hasKilledChicken = false;
-        this.offsetX = 30;
-        this.offsetWidth = 60;
-        this.offsetY = 10;
-        this.offsetHeight = 20;
-
         this.deathLoopCount = 0;
         this.maxDeathLoops = 3;
+            this.offset = {
+            top: 120,  
+            bottom: 15,
+            left: 30,
+            right: 30
+        };
         setTimeout(() => this.spawnProtected = false, 2000);
     }
 
@@ -211,9 +212,7 @@ class Character extends MoveableObject {
             if (this.isAboveGround()) {
                 this.playJumpAnimation();
             } else {
-                // Boden erreicht → Sprung-Animation zurücksetzen
                 this.jumpAnimationPlayed = false;
-
                 if (this.isDead()) {
                     this.playDeadAnimation();
                 } else if (this.isHurt()) {
@@ -238,7 +237,6 @@ class Character extends MoveableObject {
             this.jumpAnimationPlayed = true;
         }
         this.playAnimation(this.IMAGES_JUMPING);
-        // Optional: Verhindert Überlauf – bleibt auf letztem Bild
         if (this.currentImages >= this.IMAGES_JUMPING.length) {
             this.currentImages = this.IMAGES_JUMPING.length - 1;
         }
@@ -250,7 +248,6 @@ class Character extends MoveableObject {
      */
     playDeadAnimation() {
     this.playAnimation(this.IMAGES_DEAD);
-    
     if (this.currentImages >= this.IMAGES_DEAD.length) {
         this.deathLoopCount++;
         if (this.deathLoopCount < this.maxDeathLoops) {

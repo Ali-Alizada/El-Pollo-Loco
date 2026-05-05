@@ -12,6 +12,7 @@ class WorldStateManager {
     /**
      * Handles clicks on UI elements.
      * @param {string} action - Action: "start", "restart", "back", "sound", "fullscreen"
+     * @returns {void}
      */
     handleClick(action) {
         if (action === "start") this.startGame();
@@ -21,14 +22,20 @@ class WorldStateManager {
         else if (action === "fullscreen") window.toggleFullscreen?.();
     }
 
-    /** Starts the running game (sets state, starts background music). */
+    /**
+     * Starts the running game (sets state, starts background music).
+     * @returns {void}
+     */
     startGame() {
         this.world.gameState = "running";
         this.world.sound.loop("bgMusic");
         window.showScreen?.(null);
     }
 
-    /** Toggles sound on/off and handles background music accordingly. */
+    /**
+     * Toggles sound on/off and handles background music accordingly.
+     * @returns {void}
+     */
     toggleSound() {
         this.world.sound.toggle();
         if (!this.world.sound.muted && this.world.gameState === "running") {
@@ -39,7 +46,10 @@ class WorldStateManager {
         window.updateSoundIcon?.();
     }
 
-    /** Resets the entire game to its initial state (start screen). */
+    /**
+     * Resets the entire game to its initial state (start screen).
+     * @returns {void}
+     */
     resetToHome() {
         this.world.clearAllIntervals();
         this.world.stopAllSounds();
@@ -55,7 +65,10 @@ class WorldStateManager {
         window.showScreen?.("startScreen");
     }
 
-    /** Resets character values (energy, position, invincibility, coins/bottles). */
+    /**
+     * Resets character values (energy, position, invincibility, coins/bottles).
+     * @returns {void}
+     */
     resetCharacter() {
         const c = this.world.character;
         c.energy = 100;
@@ -70,7 +83,10 @@ class WorldStateManager {
         setTimeout(() => (c.spawnProtected = false), 2000);
     }
 
-    /** Resets all status bars to their default values. */
+    /**
+     * Resets all status bars to their default values.
+     * @returns {void}
+     */
     resetStatusBars() {
         this.world.statusBarHealth = new Statusbarhealth();
         this.world.statusBarCoin = new Statusbarcoin();
@@ -82,7 +98,10 @@ class WorldStateManager {
         this.world.statusBarBoss.setPercentage(100);
     }
 
-    /** Performs a complete game restart (from start screen). */
+    /**
+     * Performs a complete game restart (from start screen).
+     * @returns {void}
+     */
     performRestart() {
         this.resetToHome();
         this.world.gameState = "running";
@@ -90,13 +109,20 @@ class WorldStateManager {
         window.showScreen?.(null);
     }
 
-    /** Stops all sound effects (walking, snoring, music). */
+    /**
+     * Stops all sound effects (walking, snoring, music).
+     * @returns {void}
+     */
     stopAllSounds() {
         this.world.sound.stop("snoring");
         this.world.sound.stop("walking");
         this.world.sound.stop("bgMusic");
     }
 
+    /**
+     * Initiates the win sequence, delaying the full win to allow animations.
+     * @returns {void}
+     */
     initiateWin() {
         if (this.world.gameState !== "running") return;
         this.world.gameState = "winPending";
@@ -108,6 +134,10 @@ class WorldStateManager {
         }, 1000);
     }
 
+    /**
+     * Completes the win sequence, stops all sounds, shows the win screen.
+     * @returns {void}
+     */
     completeWin() {
         if (this.world.gameState !== "winPending") return;
         this.world.gameState = "win";

@@ -9,7 +9,10 @@ class WorldCollisionHandler {
         this.world = world;
     }
 
-    /** Main collision check entry point. */
+    /**
+     * Main collision check entry point. Delegates to specific collision handlers.
+     * @returns {void}
+     */
     checkCollisionsLogic() {
         this.checkEnemyCollisions();
         this.checkCoinCollisions();
@@ -25,6 +28,7 @@ class WorldCollisionHandler {
      */
     checkEnemyCollisions() {
         this.world.level.enemies.forEach(enemy => {
+            if (enemy.isDeadState) return; 
             const character = this.world.character;
             if (!character.isColliding(enemy)) return;
             if (this._handleJumpOnChicken(character, enemy)) return;
@@ -65,7 +69,10 @@ class WorldCollisionHandler {
         }
     }
 
-    /** Sets game state to "dying" and plays game over sound. */
+    /**
+     * Sets game state to "dying" and plays game over sound.
+     * @returns {void}
+     */
     setLoseState() {
         this.world.gameState = "dying";
         this.world.stopAllSounds();
@@ -75,7 +82,10 @@ class WorldCollisionHandler {
         }
     }
 
-    /** Collects coins on collision and updates the coin status bar. */
+    /**
+     * Collects coins on collision and updates the coin status bar.
+     * @returns {void}
+     */
     checkCoinCollisions() {
         this.world.level.coins.forEach((coin, idx) => {
             const character = this.world.character;
@@ -90,13 +100,12 @@ class WorldCollisionHandler {
 
     /**
      * Collects bottles (items) on collision and updates the bottle status bar.
-     * Uses a precise hitbox check via a helper.
      * @returns {void}
      */
     checkBottleCollisions() {
         this.world.level.bottles.forEach((bottle, idx) => {
             const char = this.world.character;
-            if (this._isCollectibleCollision(char, bottle) && char.bottles < 5) {
+            if (char.isColliding(bottle) && char.bottles < 5) {
                 char.bottles++;
                 this.world.statusBarBottle.setPercentage(char.bottles * 20);
                 this.world.sound.play("bottle");
@@ -106,53 +115,13 @@ class WorldCollisionHandler {
     }
 
     /**
-     * Checks if the character can collect a bottle using a custom, tighter hitbox.
-     * @param {Character} character - The game character.
-     * @param {Bottle} bottle - The bottle object.
-     * @returns {boolean} True if character collides with bottle within the custom bounds.
-     * @private
-     */
-    _isCollectibleCollision(character, bottle) {
-        const charBox = {
-            x: character.x + 20,
-            y: character.y + 20,
-            width: character.width - 40,
-            height: character.height - 40
-        };
-        const bottleBox = {
-            x: bottle.x + 15,
-            y: bottle.y + 10,
-            width: bottle.width - 30,
-            height: bottle.height - 20
-        };
-        return (charBox.x < bottleBox.x + bottleBox.width &&
-                charBox.x + charBox.width > bottleBox.x &&
-                charBox.y < bottleBox.y + bottleBox.height &&
-                charBox.y + charBox.height > bottleBox.y);
-    }
-
-        /**
-     * Überprüft Kollisionen zwischen geworfenen Flaschen und dem Endboss.
-     * Bei einem Treffer wird der Boss getroffen. Wenn der Boss dadurch stirbt,
-     * wird der Sieg verzögert (nach 1 Sekunde), damit die Todesanimation abgespielt werden kann.
+     * Checks collisions between thrown bottles and the end boss.
+     * @returns {void}
      */
     checkThrowableCollisions() {
         for (let i = 0; i < this.world.throwableObjects.length; i++) {
             const bottle = this.world.throwableObjects[i];
-            let hitBoss = false;
-
-            for (let enemy of this.world.level.enemies) {
-                if (enemy instanceof Endboss && bottle.isColliding(enemy)) {
-                    this.handleBossHit(enemy, bottle);
-                    hitBoss = true;
-                    if (enemy.energy <= 0 && this.world.gameState === "running") {
-                        this.world.stateManager.initiateWin();
-                    }
-                    break;
-                }
-            }
-
-            if (hitBoss) {
+            if (this._checkAndHandleBossHit(bottle)) {
                 this.world.throwableObjects.splice(i, 1);
                 i--;
             }
@@ -160,20 +129,43 @@ class WorldCollisionHandler {
     }
 
     /**
+     * Checks if a bottle hits the boss, handles the hit and returns true if hit.
+     * @param {ThrowableObject} bottle - The thrown bottle
+     * @returns {boolean} True if the boss was hit
+     * @private
+     */
+    _checkAndHandleBossHit(bottle) {
+        for (let enemy of this.world.level.enemies) {
+            if (enemy instanceof Endboss && bottle.isColliding(enemy)) {
+                this.handleBossHit(enemy, bottle);
+                if (enemy.energy <= 0 && this.world.gameState === "running") {
+                    this.world.stateManager.initiateWin();
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Handles a hit on the end boss: reduces energy, plays sounds, creates splash.
      * @param {Endboss} enemy - The boss enemy
      * @param {ThrowableObject} bottle - The thrown bottle
+     * @returns {void}
      */
     handleBossHit(enemy, bottle) {
         enemy.hit();
         this.world.statusBarBoss.setPercentage(enemy.energy);
         this.world.sound.play("bossHit");
         this.world.sound.play("splash");
-        this.world.splashObjects.push(new Splash(enemy.x + enemy.width / 15, enemy.y + enemy.height / 3));
+        this.world.splashObjects.push(new Splash(enemy.x + enemy.width / 5, enemy.y + enemy.height / 3));
         bottle.hitBoss = true;
     }
 
-    /** Removes all objects marked for deletion (bottles, splashes, defeated enemies). */
+    /**
+     * Removes all objects marked for deletion (bottles, splashes, defeated enemies).
+     * @returns {void}
+     */
     cleanupMarkedObjects() {
         this.world.throwableObjects = this.world.throwableObjects.filter(b => !b.markedForDeletion);
         this.world.splashObjects = this.world.splashObjects.filter(s => !s.finished);
@@ -198,6 +190,7 @@ class WorldCollisionHandler {
     /**
      * Kills all chickens near a hit enemy (e.g., bottle explosion).
      * @param {MoveableObject} hitEnemy - The hit enemy (reference point)
+     * @returns {void}
      */
     killNearbyChickens(hitEnemy) {
         this.world.level.enemies.forEach(enemy => {
@@ -209,6 +202,7 @@ class WorldCollisionHandler {
      * Spawns a new bottle at a given position (e.g., when a small chicken dies).
      * @param {number} x - X coordinate
      * @param {number} y - Y coordinate
+     * @returns {void}
      */
     spawnBottle(x, y) {
         this.world.level.bottles.push(new Bottle(x, y));

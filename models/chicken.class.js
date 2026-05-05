@@ -1,7 +1,12 @@
 class Chicken extends MoveableObject {
-    y = 350;
+    y = 345;
     height = 70;
     width = 60;
+    isDeadState = false;
+    isPanicking = false;
+    panicEndTime = 0;
+    isPanickingFromBoss = false;
+    bossPanicEnd = 0;
 
     IMAGES_WALKING = [
         'img/3_enemies_chicken/chicken_normal/1_walk/1_w.png',
@@ -14,12 +19,6 @@ class Chicken extends MoveableObject {
         'img/3_enemies_chicken/chicken_normal/2_dead/dead1.png',
         'img/3_enemies_chicken/chicken_normal/2_dead/dead2.png',
     ];
-
-    isDeadState = false;
-    isPanicking = false;
-    panicEndTime = 0;
-    isPanickingFromBoss = false;
-    bossPanicEnd = 0;
 
     /**
      * Creates a new Chicken instance.
@@ -35,6 +34,13 @@ class Chicken extends MoveableObject {
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_DEAD);
         this.walkRange = 300 + Math.random() * 300;
+        this.offset = {         
+            top: 5,
+            bottom: 0,
+            left: 5,
+            right: 5
+        };
+
         setTimeout(() => {
             this.animate();
         }, Math.random() * 1000);
@@ -49,18 +55,12 @@ class Chicken extends MoveableObject {
     animate() {
         this.stopIntervals();
         this.moveInterval = setInterval(() => {
-            if (this.isDeadState) return;
-            if (!this.world || !this.world.character) return;
+            if (this.isDeadState || !this.world?.character) return;
             this.moveLeft();
             this.otherDirection = false;
         }, 1000 / 60);
-
         this.animationInterval = setInterval(() => {
-            if (this.isDeadState) {
-                this.playAnimation(this.IMAGES_DEAD);
-            } else {
-                this.playAnimation(this.IMAGES_WALKING);
-            }
+            this.playAnimation(this.isDeadState ? this.IMAGES_DEAD : this.IMAGES_WALKING);
         }, 200);
     }
 

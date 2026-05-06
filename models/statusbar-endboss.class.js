@@ -49,24 +49,10 @@ class StatusBarBoss extends Drawableobject {
         this.percentage = percentage;
         if (percentage == 10) {
             this.isLow = true;
-            this.startBlinking();
         }
 
         let path = this.IMAGES[this.resolveImageIndex()];
         this.img = this.imgCache[path];
-    }
-
-    /**
-     * Starts the blinking animation by toggling the visibility every frame.
-     * The interval runs continuously once started.
-     * @returns {void}
-     */
-    startBlinking() {
-        if (this.blinkInterval) return;
-
-        this.blinkInterval = setInterval(() => {
-            this.visible = !this.visible;
-        });
     }
 
     /**

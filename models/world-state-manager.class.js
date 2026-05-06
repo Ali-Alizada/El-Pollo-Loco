@@ -131,8 +131,9 @@ class WorldStateManager {
             if (this.world.gameState === "winPending") {
                 this.completeWin();
             }
-        }, 1000);
+        }, 400);
     }
+    
 
     /**
      * Completes the win sequence, stops all sounds, shows the win screen.

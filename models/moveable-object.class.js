@@ -13,7 +13,7 @@ class MoveableObject extends Drawableobject {
     acceleration = 2.5;
     energy = 100;
     lastHit = 0;
-    offset = {        
+    offset = {
         top: 0,
         bottom: 0,
         left: 0,
@@ -22,14 +22,12 @@ class MoveableObject extends Drawableobject {
 
     /**
      * Applies gravity to the object, updating its vertical position and speed.
-     * Runs continuously on an interval (25 fps). If the object is above ground or moving upward,
-     * it decreases speedY due to acceleration (gravity). When on ground, resets speedY and snaps
-     * the character to the ground.
+     * Stores the interval ID in this.gravityInterval so it can be stopped later.
      * @returns {void}
      */
     applyGravity() {
-        setInterval(() => {
-            this.previousY = this.y; 
+        this.gravityInterval = setInterval(() => {
+            this.previousY = this.y;
             if (this.isAboveGround() || this.speedY > 0) {
                 this.y -= this.speedY;
                 this.speedY -= this.acceleration;
@@ -40,6 +38,14 @@ class MoveableObject extends Drawableobject {
                 }
             }
         }, 1000 / 25);
+    }
+
+    /** Stops the gravity interval. */
+    stopGravity() {
+        if (this.gravityInterval) {
+            clearInterval(this.gravityInterval);
+            this.gravityInterval = null;
+        }
     }
 
     /**
@@ -65,9 +71,9 @@ class MoveableObject extends Drawableobject {
      */
     isColliding(mo) {
         return this.x + this.width - this.offset.right > mo.x + mo.offset.left &&
-               this.y + this.height - this.offset.bottom > mo.y + mo.offset.top &&
-               this.x + this.offset.left < mo.x + mo.width - mo.offset.right &&
-               this.y + this.offset.top < mo.y + mo.height - mo.offset.bottom;
+            this.y + this.height - this.offset.bottom > mo.y + mo.offset.top &&
+            this.x + this.offset.left < mo.x + mo.width - mo.offset.right &&
+            this.y + this.offset.top < mo.y + mo.height - mo.offset.bottom;
     }
 
     /**
@@ -104,7 +110,6 @@ class MoveableObject extends Drawableobject {
 
     /**
      * Cycles through an array of images to create an animation.
-     * Uses the `currentImages` counter (inherited from `Drawableobject`) to determine the next frame.
      * @param {string[]} images - Array of image paths.
      * @returns {void}
      */

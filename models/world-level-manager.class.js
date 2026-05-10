@@ -14,7 +14,8 @@ class WorldLevelManager {
         this.cleanupOldLevel();
         this.world.level = new Level(
             this.createEnemies(),
-            [...level1.clouds],
+            // [...level1.clouds],
+            this.createClouds(),
             [...level1.backgroundObjects],
             this.createCoins(),
             this.createBottles()
@@ -64,8 +65,23 @@ class WorldLevelManager {
     cleanupOldLevel() {
         this.world.level?.enemies?.forEach(e => e.stopIntervals?.());
         this.world.character?.stopIntervals?.();
+
+        this.world.level?.clouds?.forEach(cloud => cloud.stopMovement?.());
     }
 
+    /** world-level-manager.class.js  */
+    createClouds() {
+        const clouds = [];
+        const startX = -200;
+        const endX = 3200;
+        const step = 600;
+        for (let x = startX; x < endX; x += step) {
+            const offsetX = Math.random() * 150;
+            clouds.push(new Cloud(x + offsetX));
+        }
+        return clouds;
+    }
+    
     /** Connects the world reference to all objects (character, enemies, clouds). */
     setWorld() {
         this.world.character.world = this.world;

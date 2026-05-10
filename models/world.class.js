@@ -10,7 +10,6 @@ class World {
     camera_x = 0;
     images;
     sound;
-    gameState = "running";
     statusBarHealth = new Statusbarhealth();
     statusBarBottle = new Statusbarbottle();
     statusBarCoin = new Statusbarcoin();
@@ -24,6 +23,26 @@ class World {
     winSoundPlayed = false;
     boss;
 
+    // Getter/Setter for gameState 
+    set gameState(state) {
+        this._gameState = state;
+        if (state === "gameOver" || state === "win" || state === "dying") {
+            this.stopAllClouds();
+        }
+    }
+
+    get gameState() {
+        return this._gameState;
+    }
+
+    stopAllClouds() {
+        if (this.level && this.level.clouds) {
+            this.level.clouds.forEach(cloud => {
+                if (cloud.stopMovement) cloud.stopMovement();
+            });
+        }
+    }
+
     /**
      * Creates a new game world.
      * @param {HTMLCanvasElement} canvas - The canvas element
@@ -35,6 +54,7 @@ class World {
         this.keyboard = keyboard;
         this.images = new ImageManager();
         this.sound = new SoundManager();
+         this._gameState = "start";
         this.gameState = "start";
         this.collisionHandler = new WorldCollisionHandler(this);
         this.renderer = new WorldRenderer(this);

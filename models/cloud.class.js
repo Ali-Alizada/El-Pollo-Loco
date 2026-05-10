@@ -2,6 +2,7 @@ class Cloud extends MoveableObject {
     y = 20;
     height = 300;
     width = 550;
+    animationInterval = null;  
 
     /**
      * Creates a new Cloud instance.
@@ -23,11 +24,18 @@ class Cloud extends MoveableObject {
      * @returns {void}
      */
     animate() {
-        setInterval(() => {
+        this.animationInterval = setInterval(() => {
             this.moveLeft();
             if (this.x + this.width < 0 && this.world) {
                 this.x = this.world.level.level_end_x + Math.random() * 300;
             }
         }, 1000 / 60);
+    }
+
+     stopMovement() {
+        if (this.animationInterval) {
+            clearInterval(this.animationInterval);
+            this.animationInterval = null;
+        }
     }
 }

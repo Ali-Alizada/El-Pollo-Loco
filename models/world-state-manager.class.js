@@ -27,6 +27,13 @@ class WorldStateManager {
      * @returns {void}
      */
     startGame() {
+        const character = this.world.character;
+        if (character) {
+            character.lastMoveTime = Date.now();
+            character.snoringSoundPlaying = false;
+            character.currentImages = 0;
+            this.world.sound.stop('snoring');
+        }
         this.world.gameState = "running";
         this.world.sound.loop("bgMusic");
         window.showScreen?.(null);

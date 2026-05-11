@@ -259,12 +259,30 @@ class Character extends MoveableObject {
     }
 
     /**
+     * Determines whether any enemies are close enough to keep the character awake.
+     * @returns {boolean} True if at least one enemy is nearby.
+     */
+    areEnemiesNearby() {
+        if (!this.world?.level?.enemies?.length) return false;
+        const NEARBY_DISTANCE_X = 500;
+        const NEARBY_DISTANCE_Y = 200;
+        return this.world.level.enemies.some(enemy => {
+            return Math.abs(this.x - enemy.x) < NEARBY_DISTANCE_X &&
+                Math.abs(this.y - enemy.y) < NEARBY_DISTANCE_Y;
+        });
+    }
+
+    /**
      * Handles idle (short idle) and long idle (snoring) animations based on time since last movement.
+     * The long idle animation only starts during active gameplay and when no enemies are nearby.
      * @returns {void}
      */
     handleIdleAnimation() {
         const idleTime = Date.now() - this.lastMoveTime;
-        if (idleTime > 10000) {
+        const gameRunning = this.world?.gameState === "running";
+        const shouldSnore = gameRunning && idleTime > 10000;
+
+        if (shouldSnore) {
             this.playAnimation(this.IMAGES_LONG_IDLE);
             if (!this.snoringSoundPlaying) {
                 this.world.sound.loop('snoring');
@@ -272,7 +290,7 @@ class Character extends MoveableObject {
             }
         } else {
             this.playAnimation(this.IMAGES_IDLE);
-            this.world.sound.stop('snoring');
+            this.world?.sound.stop('snoring');
             this.snoringSoundPlaying = false;
         }
     }

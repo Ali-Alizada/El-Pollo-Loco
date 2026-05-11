@@ -23,7 +23,10 @@ class World {
     winSoundPlayed = false;
     boss;
 
-    // Getter/Setter for gameState 
+    /**
+     * Setzt den aktuellen Spielzustand und führt bei Spielende Aktionen aus.
+     * @param {string} state - Neuer Spielzustand ("running", "start", "dying", "gameOver", "win", "winPending", "lose")
+     */
     set gameState(state) {
         this._gameState = state;
         if (state === "gameOver" || state === "win" || state === "dying") {
@@ -31,10 +34,19 @@ class World {
         }
     }
 
+    /**
+     * Gibt den aktuellen Spielzustand zurück.
+     * @returns {string} Der aktuelle Spielzustand.
+     */
     get gameState() {
         return this._gameState;
     }
 
+    /**
+     * Stoppt die Bewegung aller Wolken im aktuellen Level.
+     * Ruft für jede Wolke die Methode `stopMovement()` auf, falls vorhanden.
+     * @returns {void}
+     */
     stopAllClouds() {
         if (this.level && this.level.clouds) {
             this.level.clouds.forEach(cloud => {
@@ -54,7 +66,7 @@ class World {
         this.keyboard = keyboard;
         this.images = new ImageManager();
         this.sound = new SoundManager();
-         this._gameState = "start";
+        this._gameState = "start";
         this.gameState = "start";
         this.collisionHandler = new WorldCollisionHandler(this);
         this.renderer = new WorldRenderer(this);

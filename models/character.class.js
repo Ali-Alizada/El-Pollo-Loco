@@ -264,7 +264,7 @@ class Character extends MoveableObject {
      */
     handleIdleAnimation() {
         const idleTime = Date.now() - this.lastMoveTime;
-        if (idleTime > 60000) {
+        if (idleTime > 10000) {
             this.playAnimation(this.IMAGES_LONG_IDLE);
             if (!this.snoringSoundPlaying) {
                 this.world.sound.loop('snoring');

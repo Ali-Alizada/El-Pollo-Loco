@@ -178,7 +178,7 @@ class Endboss extends MoveableObject {
      */
     startMoveInterval() {
         this.moveInterval = setInterval(() => {
-            if (!this.world || this.isDead()) return;
+            if (!this.world || this.isDead() || this.world.gameState !== 'running') return;
             this.movementStep();
         }, 1000 / 25);
     }
@@ -189,7 +189,7 @@ class Endboss extends MoveableObject {
      */
     startAnimationInterval() {
         this.animationInterval = setInterval(() => {
-            if (!this.world) return;
+            if (!this.world || this.world.gameState !== 'running') return;
             this.updateAnimationStep();
         }, 300);
     }

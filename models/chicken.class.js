@@ -55,12 +55,14 @@ class Chicken extends MoveableObject {
     animate() {
         this.stopIntervals();
         this.moveInterval = setInterval(() => {
-            if (this.isDeadState || !this.world?.character) return;
+            if (this.isDeadState || !this.world?.character || this.world.gameState !== 'running') return;
             this.moveLeft();
             this.otherDirection = false;
         }, 1000 / 60);
         this.animationInterval = setInterval(() => {
-            this.playAnimation(this.isDeadState ? this.IMAGES_DEAD : this.IMAGES_WALKING);
+            if (this.world?.gameState === 'running' || this.isDeadState) {
+                this.playAnimation(this.isDeadState ? this.IMAGES_DEAD : this.IMAGES_WALKING);
+            }
         }, 200);
     }
 

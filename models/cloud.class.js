@@ -25,6 +25,7 @@ class Cloud extends MoveableObject {
      */
     animate() {
         this.animationInterval = setInterval(() => {
+            if (!this.world || this.world.gameState !== 'running') return;
             this.moveLeft();
             if (this.x + this.width < 0 && this.world) {
                 this.x = this.world.level.level_end_x + Math.random() * 300;

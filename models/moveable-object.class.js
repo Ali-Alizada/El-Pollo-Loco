@@ -5,7 +5,6 @@
  * @extends Drawableobject
  */
 class MoveableObject extends Drawableobject {
-
     static GROUND_Y = 420;
     speed = 0.15;
     otherDirection = false;
@@ -13,12 +12,7 @@ class MoveableObject extends Drawableobject {
     acceleration = 2.5;
     energy = 100;
     lastHit = 0;
-    offset = {
-        top: 0,
-        bottom: 0,
-        left: 0,
-        right: 0
-    };
+    offset = {top: 0, bottom: 0, left: 0, right: 0 };
 
     /**
      * Applies gravity to the object, updating its vertical position and speed.

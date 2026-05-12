@@ -2,12 +2,12 @@ let canvas;
 let world;
 let keyboard = new Keyboard();
 
-// Joystick global state variables (for extracting the long setupJoystick function)
+// Joystick global state variables
 let joystickActive = false;
 let joystickCenterX = 0;
 
 /**
- * Initializes the game, canvas, controls, and world.
+ * Initializes the game: sets up canvas, UI, joystick, mobile controls, and the world.
  * @function init
  * @returns {void}
  */
@@ -36,7 +36,7 @@ window.addEventListener("keyup", (event) => {
 });
 
 /**
- * Sets up the sound button.
+ * Sets up the sound button to toggle mute.
  * @function setupSoundButton
  * @returns {void}
  */
@@ -48,7 +48,7 @@ function setupSoundButton() {
 }
 
 /**
- * Sets up the fullscreen button.
+ * Sets up the fullscreen button to toggle full‑screen mode.
  * @function setupFullscreenButton
  * @returns {void}
  */
@@ -59,7 +59,7 @@ function setupFullscreenButton() {
 }
 
 /**
- * Sets up the start button.
+ * Sets up the start button to begin the game.
  * @function setupStartButton
  * @returns {void}
  */
@@ -71,11 +71,11 @@ function setupStartButton() {
 }
 
 /**
- * Sets up the buttons for win and lose screens (Home & Restart).
- * @function setupGameOverButtons
+ * Sets up the Home and Restart buttons for the win screen.
+ * @function setupWinScreenButtons
  * @returns {void}
  */
-function setupGameOverButtons() {
+function setupWinScreenButtons() {
     document.getElementById("homeWin").onclick = () => {
         world.handleClick("back");
         showScreen("startScreen");
@@ -84,6 +84,14 @@ function setupGameOverButtons() {
         world.handleClick("restart");
         showScreen(null);
     };
+}
+
+/**
+ * Sets up the Home and Restart buttons for the lose screen.
+ * @function setupLoseScreenButtons
+ * @returns {void}
+ */
+function setupLoseScreenButtons() {
     document.getElementById("homeLose").onclick = () => {
         world.handleClick("back");
         showScreen("startScreen");
@@ -95,7 +103,17 @@ function setupGameOverButtons() {
 }
 
 /**
- * Sets up the privacy and info buttons as well as the dialog close.
+ * Sets up the buttons on the win/lose screens (Home & Restart).
+ * @function setupGameOverButtons
+ * @returns {void}
+ */
+function setupGameOverButtons() {
+    setupWinScreenButtons();
+    setupLoseScreenButtons();
+}
+
+/**
+ * Sets up the privacy and info buttons plus the dialog close behaviour.
  * @function setupInfoPrivacyButtons
  * @returns {void}
  */
@@ -115,7 +133,7 @@ function setupInfoPrivacyButtons() {
 }
 
 /**
- * Main UI setup function (calls all sub-UI functions).
+ * Main UI setup – calls all sub‑setup functions.
  * @function setupUI
  * @returns {void}
  */
@@ -128,7 +146,7 @@ function setupUI() {
 }
 
 /**
- * Updates the sound icon based on mute status.
+ * Updates the sound icon depending on the mute status.
  * @function updateSoundIcon
  * @returns {void}
  */
@@ -155,14 +173,12 @@ function toggleFullscreen() {
 }
 
 /**
- * Sets up mobile touch buttons for jump and throw.
- * @function setupMobileControls
+ * Sets up touch events for the jump button.
+ * @function setupJumpButton
  * @returns {void}
  */
-function setupMobileControls() {
+function setupJumpButton() {
     const btnJump = document.getElementById("btnJump");
-    const btnThrow = document.getElementById("btnThrow");
-
     btnJump.addEventListener("touchstart", (e) => {
         e.preventDefault();
         keyboard.SPACE = true;
@@ -171,6 +187,15 @@ function setupMobileControls() {
         e.preventDefault();
         keyboard.SPACE = false;
     });
+}
+
+/**
+ * Sets up touch events for the throw button.
+ * @function setupThrowButton
+ * @returns {void}
+ */
+function setupThrowButton() {
+    const btnThrow = document.getElementById("btnThrow");
     btnThrow.addEventListener("touchstart", (e) => {
         e.preventDefault();
         keyboard.D = true;
@@ -182,8 +207,18 @@ function setupMobileControls() {
 }
 
 /**
- * Shows a specific screen and hides all others.
- * @param {string|null} id - ID of the screen to show, or null for none.
+ * Sets up touch buttons for mobile: jump and throw.
+ * @function setupMobileControls
+ * @returns {void}
+ */
+function setupMobileControls() {
+    setupJumpButton();
+    setupThrowButton();
+}
+
+/**
+ * Displays a specific screen (start, win, lose) and hides the others.
+ * @param {string|null} id - ID of the screen to show, or null to hide all.
  * @returns {void}
  */
 function showScreen(id) {
@@ -196,8 +231,8 @@ function showScreen(id) {
 }
 
 /**
- * Updates the visibility of the bottom bar.
- * @param {string|null} screenId - Active screen or null.
+ * Shows or hides the bottom bar depending on the active screen.
+ * @param {string|null} screenId - Currently active screen ID or null.
  * @returns {void}
  */
 function updateUIVisibility(screenId) {
@@ -206,7 +241,7 @@ function updateUIVisibility(screenId) {
 }
 
 /**
- * Updates the visibility of mobile controls depending on game state.
+ * Shows or hides the mobile controls (buttons + joystick) based on game state.
  * @function updateMobileControls
  * @returns {void}
  */
@@ -237,7 +272,7 @@ function joystickTouchStart(e) {
 }
 
 /**
- * Touch move handler for the joystick (calculates movement and sets keyboard state).
+ * Touch move handler for the joystick – updates movement direction.
  * @param {TouchEvent} e - Touch event.
  * @returns {void}
  */
@@ -257,7 +292,7 @@ function joystickTouchMove(e) {
 }
 
 /**
- * Touch end handler for the joystick (resets joystick).
+ * Touch end handler for the joystick – resets movement.
  * @param {TouchEvent} e - Touch event.
  * @returns {void}
  */
@@ -272,7 +307,7 @@ function joystickTouchEnd(e) {
 }
 
 /**
- * Sets up the joystick (binds touch events).
+ * Sets the joystick event listeners.
  * @function setupJoystick
  * @returns {void}
  */
@@ -284,7 +319,7 @@ function setupJoystick() {
 }
 
 /**
- * Opens the dialog (privacy or info).
+ * Opens the privacy or info dialog.
  * @param {string} type - Type of dialog: "privacy" or "info".
  * @returns {void}
  */
@@ -301,7 +336,7 @@ function openDialog(type) {
 }
 
 /**
- * Closes the opened dialog.
+ * Closes the currently open dialog.
  * @function closeDialog
  * @returns {void}
  */

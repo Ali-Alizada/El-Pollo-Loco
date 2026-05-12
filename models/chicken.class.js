@@ -34,16 +34,8 @@ class Chicken extends MoveableObject {
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_DEAD);
         this.walkRange = 300 + Math.random() * 300;
-        this.offset = {         
-            top: 5,
-            bottom: 0,
-            left: 5,
-            right: 5
-        };
-
-        setTimeout(() => {
-            this.animate();
-        }, Math.random() * 1000);
+        this.offset = { top: 5, bottom: 0, left: 5, right: 5};
+        setTimeout(() => { this.animate();}, Math.random() * 1000);
     }
 
     /**

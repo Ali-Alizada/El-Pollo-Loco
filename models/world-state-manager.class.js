@@ -32,6 +32,7 @@ class WorldStateManager {
             character.lastMoveTime = Date.now();
             character.snoringSoundPlaying = false;
             character.currentImages = 0;
+            character.otherDirection = false;
             this.world.sound.stop('snoring');
         }
         this.world.gameState = "running";
@@ -83,6 +84,7 @@ class WorldStateManager {
         c.bottles = 0;
         c.x = 120;
         c.y = 95;
+        c.otherDirection = false;
         c.lastHitTime = 0;
         c.lastMoveTime = Date.now();
         c.invincibleUntil = 0;
@@ -141,7 +143,6 @@ class WorldStateManager {
         }, 400);
     }
     
-
     /**
      * Completes the win sequence, stops all sounds, shows the win screen.
      * @returns {void}

@@ -6,7 +6,6 @@ class SoundManager {
     constructor() {
         const savedMuted = localStorage.getItem('soundMuted');
         this.muted = savedMuted === 'true';
-
         this.sounds = {
             coin: new Audio('assets/audio/collectibles/collectSound.wav'),
             bottle: new Audio('assets/audio/collectibles/bottleCollectSound.wav'),

@@ -16,17 +16,25 @@
     -webkit-tap-highlight-color: transparent;
 }
 
+html {
+    min-height: 100%;
+    min-width: 100%;
+}
+
 body {
     font-family: 'Inter', serif;
     margin: 0;
+    width: 100%;
+    min-width: 100vw;
     display: flex;
     flex-direction: column;
     align-items: center;  
     justify-content: center;
     min-height: 100vh;
+    background-color: #000;
     background-image: url("img/9_intro_outro_screens/canvas_hintergrund/cactus.png");
     background-size: cover;
-    background-position: center;
+    background-position: center center;
     background-repeat: no-repeat;
     overflow-x: hidden;
     position: relative;

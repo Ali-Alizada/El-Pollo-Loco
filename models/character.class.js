@@ -1,12 +1,12 @@
 class Character extends MoveableObject {
     height = 250;
     width = 120;
-    speed = 12; 
+    speed = 12;
     coins = 0;
     bottles = 0;
     lastHitTime = 0;
     lastMoveTime = new Date().getTime();
-    hitCooldown = 300; 
+    hitCooldown = 300;
     walkingSoundPlaying = false;
     snoringSoundPlaying = false;
     deadSoundPlayed = false;
@@ -40,25 +40,24 @@ class Character extends MoveableObject {
     ];
 
     IMAGES_WALKING = [
-            'img/2_character_pepe/2_walk/W-21.png',
-            'img/2_character_pepe/2_walk/W-22.png',
-            'img/2_character_pepe/2_walk/W-23.png',
-            'img/2_character_pepe/2_walk/W-24.png',
-            'img/2_character_pepe/2_walk/W-25.png',
-            'img/2_character_pepe/2_walk/W-26.png'
-        
+        'img/2_character_pepe/2_walk/W-21.png',
+        'img/2_character_pepe/2_walk/W-22.png',
+        'img/2_character_pepe/2_walk/W-23.png',
+        'img/2_character_pepe/2_walk/W-24.png',
+        'img/2_character_pepe/2_walk/W-25.png',
+        'img/2_character_pepe/2_walk/W-26.png'
     ];
 
     IMAGES_JUMPING = [
-            'img/2_character_pepe/3_jump/J-31.png',
-            'img/2_character_pepe/3_jump/J-32.png',
-            'img/2_character_pepe/3_jump/J-33.png',
-            'img/2_character_pepe/3_jump/J-34.png',
-            'img/2_character_pepe/3_jump/J-35.png',
-            'img/2_character_pepe/3_jump/J-36.png',
-            'img/2_character_pepe/3_jump/J-37.png',
-            'img/2_character_pepe/3_jump/J-38.png',
-            'img/2_character_pepe/3_jump/J-39.png'
+        'img/2_character_pepe/3_jump/J-31.png',
+        'img/2_character_pepe/3_jump/J-32.png',
+        'img/2_character_pepe/3_jump/J-33.png',
+        'img/2_character_pepe/3_jump/J-34.png',
+        'img/2_character_pepe/3_jump/J-35.png',
+        'img/2_character_pepe/3_jump/J-36.png',
+        'img/2_character_pepe/3_jump/J-37.png',
+        'img/2_character_pepe/3_jump/J-38.png',
+        'img/2_character_pepe/3_jump/J-39.png'
     ];
 
     IMAGES_HURT = [
@@ -68,29 +67,47 @@ class Character extends MoveableObject {
     ];
 
     IMAGES_DEAD = [
-            'img/2_character_pepe/5_dead/D-51.png',
-            'img/2_character_pepe/5_dead/D-52.png',
-            'img/2_character_pepe/5_dead/D-53.png',
-            'img/2_character_pepe/5_dead/D-54.png',
-            'img/2_character_pepe/5_dead/D-55.png',
-            'img/2_character_pepe/5_dead/D-56.png',
-            'img/2_character_pepe/5_dead/D-57.png'
+        'img/2_character_pepe/5_dead/D-51.png',
+        'img/2_character_pepe/5_dead/D-52.png',
+        'img/2_character_pepe/5_dead/D-53.png',
+        'img/2_character_pepe/5_dead/D-54.png',
+        'img/2_character_pepe/5_dead/D-55.png',
+        'img/2_character_pepe/5_dead/D-56.png',
+        'img/2_character_pepe/5_dead/D-57.png'
     ];
 
     world;
-   /**
+
+    /**
      * Creates a new Character (Pepe) instance.
      * Loads all animation images, sets up gravity, collision offsets, and spawn protection.
      * @constructor
      */
     constructor() {
         super().loadImage('img/2_character_pepe/2_walk/W-21.png');
+        this.loadCharacterImages();
+        this.initCharacterProperties();
+        setTimeout(() => this.spawnProtected = false, 2000);
+    }
+
+    /**
+     * Loads all image sequences for idle, walking, jumping, hurt, and death animations.
+     * @returns {void}
+     */
+    loadCharacterImages() {
         this.loadImages(this.IMAGES_IDLE);
         this.loadImages(this.IMAGES_LONG_IDLE);
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_JUMPING);
         this.loadImages(this.IMAGES_HURT);
         this.loadImages(this.IMAGES_DEAD);
+    }
+
+    /**
+     * Initializes character physics, collision offset, and initial state flags.
+     * @returns {void}
+     */
+    initCharacterProperties() {
         this.setToGround();
         this.applyGravity();
         this.invincibleUntil = 0;
@@ -98,13 +115,7 @@ class Character extends MoveableObject {
         this.hasKilledChicken = false;
         this.deathLoopCount = 0;
         this.maxDeathLoops = 3;
-            this.offset = {
-            top: 120,  
-            bottom: 15,
-            left: 30,
-            right: 30
-        };
-        setTimeout(() => this.spawnProtected = false, 2000);
+        this.offset = { top: 120, bottom: 15, left: 30, right: 30 };
     }
 
     /**
@@ -117,17 +128,18 @@ class Character extends MoveableObject {
         this.startMovementInterval();
         this.startAnimationInterval();
     }
+
     /**
-     * Calculates the foot-level hitbox of the object, typically used for ground collision or stomping mechanics.
+     * Calculates the foot-level hitbox for ground collision or stomping mechanics.
      * The hitbox is positioned at the bottom of the object, spanning most of its width.
-     * @returns {{x: number, y: number, width: number, height: number}} An object defining the foot hitbox position and size.
+     * @returns {{x: number, y: number, width: number, height: number}} Foot hitbox position and size.
      */
     getFootHitbox() {
         return {
-            x: this.x + 10,           
+            x: this.x + 10,
             y: this.y + this.height - 25,
-            width: this.width - 20,    
-            height: 25                 
+            width: this.width - 20,
+            height: 25
         };
     }
 
@@ -141,7 +153,7 @@ class Character extends MoveableObject {
     }
 
     /**
-     * Starts the interval that handles movement, input, and camera.
+     * Starts the interval that handles movement, input, and camera following.
      * @returns {void}
      */
     startMovementInterval() {
@@ -159,7 +171,7 @@ class Character extends MoveableObject {
     }
 
     /**
-     * Processes left/right movement keys and updates position.
+     * Processes left/right movement keys and updates character position.
      * Also updates lastMoveTime when moving.
      * @returns {void}
      */
@@ -180,7 +192,7 @@ class Character extends MoveableObject {
      * @returns {void}
      */
     handleWalkingSound() {
-        const isMoving = (this.world.keyboard.RIGHT || this.world.keyboard.LEFT);
+        const isMoving = this.world.keyboard.RIGHT || this.world.keyboard.LEFT;
         if (isMoving && !this.isAboveGround()) {
             if (!this.walkingSoundPlaying) {
                 this.world.sound.loop('walking');
@@ -203,29 +215,44 @@ class Character extends MoveableObject {
         }
     }
 
-        /**
-     * Starts the interval that handles state-based animation (idle, walking, jumping, hurt, dead).
+    /**
+     * Starts the interval that updates state-based animations (idle, walking, jumping, hurt, dead).
      * @returns {void}
      */
     startAnimationInterval() {
-        this.stateAnimationInterval = setInterval(() => {
-            if (this.isAboveGround()) {
-                this.playJumpAnimation();
-            } else {
-                this.jumpAnimationPlayed = false;
-                if (this.isDead()) {
-                    this.playDeadAnimation();
-                } else if (this.isHurt()) {
-                    this.playAnimation(this.IMAGES_HURT);
-                } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-                    this.playAnimation(this.IMAGES_WALKING);
-                } else {
-                    this.handleIdleAnimation();
-                }
-            }
-        }, 75);
+        this.stateAnimationInterval = setInterval(() => this.updateAnimationState(), 75);
     }
-    
+
+    /**
+     * Updates the character's animation state every frame.
+     * Handles jumping separately from ground-based states.
+     * @returns {void}
+     */
+    updateAnimationState() {
+        if (this.isAboveGround()) {
+            this.playJumpAnimation();
+        } else {
+            this.handleGroundAnimation();
+        }
+    }
+
+    /**
+     * Plays ground-based animations: dead, hurt, walking, or idle.
+     * Resets the jump flag when on ground.
+     * @returns {void}
+     */
+    handleGroundAnimation() {
+        this.jumpAnimationPlayed = false;
+        if (this.isDead()) {
+            this.playDeadAnimation();
+        } else if (this.isHurt()) {
+            this.playAnimation(this.IMAGES_HURT);
+        } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+            this.playAnimation(this.IMAGES_WALKING);
+        } else {
+            this.handleIdleAnimation();
+        }
+    }
 
     /**
      * Plays the jumping animation and resets the image index on the first frame.
@@ -247,15 +274,15 @@ class Character extends MoveableObject {
      * @returns {void}
      */
     playDeadAnimation() {
-    this.playAnimation(this.IMAGES_DEAD);
-    if (this.currentImages >= this.IMAGES_DEAD.length) {
-        this.deathLoopCount++;
-        if (this.deathLoopCount < this.maxDeathLoops) {
-            this.currentImages = 0;
-        } else if (this.world.gameState === "dying") {
-            this.world.gameState = "lose";
+        this.playAnimation(this.IMAGES_DEAD);
+        if (this.currentImages >= this.IMAGES_DEAD.length) {
+            this.deathLoopCount++;
+            if (this.deathLoopCount < this.maxDeathLoops) {
+                this.currentImages = 0;
+            } else if (this.world.gameState === "dying") {
+                this.world.gameState = "lose";
+            }
         }
-    }
     }
 
     /**
@@ -266,22 +293,21 @@ class Character extends MoveableObject {
         if (!this.world?.level?.enemies?.length) return false;
         const NEARBY_DISTANCE_X = 500;
         const NEARBY_DISTANCE_Y = 200;
-        return this.world.level.enemies.some(enemy => {
-            return Math.abs(this.x - enemy.x) < NEARBY_DISTANCE_X &&
-                Math.abs(this.y - enemy.y) < NEARBY_DISTANCE_Y;
-        });
+        return this.world.level.enemies.some(enemy =>
+            Math.abs(this.x - enemy.x) < NEARBY_DISTANCE_X &&
+            Math.abs(this.y - enemy.y) < NEARBY_DISTANCE_Y
+        );
     }
 
     /**
      * Handles idle (short idle) and long idle (snoring) animations based on time since last movement.
-     * The long idle animation only starts during active gameplay and when no enemies are nearby.
+     * Long idle only starts during active gameplay and when no enemies are nearby.
      * @returns {void}
      */
     handleIdleAnimation() {
         const idleTime = Date.now() - this.lastMoveTime;
         const gameRunning = this.world?.gameState === "running";
         const shouldSnore = gameRunning && idleTime > 10000;
-
         if (shouldSnore) {
             this.playAnimation(this.IMAGES_LONG_IDLE);
             if (!this.snoringSoundPlaying) {
@@ -296,8 +322,7 @@ class Character extends MoveableObject {
     }
 
     /**
-     * Resets the idle timer and stops snoring sound.
-     * Called when the character moves or interacts.
+     * Resets the idle timer and stops the snoring sound. Called when character moves or interacts.
      * @returns {void}
      */
     resetIdleTimer() {
@@ -309,8 +334,8 @@ class Character extends MoveableObject {
     }
 
     /**
-     * Updates character position based on keyboard axis input.
-     * @deprecated (Legacy method, kept for compatibility)
+     * Legacy method for axis‑based movement. Kept for compatibility.
+     * @deprecated
      * @returns {void}
      */
     updateMovement() {
@@ -333,21 +358,20 @@ class Character extends MoveableObject {
             this.energy -= 5;
             if (this.energy < 0) this.energy = 0;
             this.lastHitTime = now;
-            this.lastHit = now;               
+            this.lastHit = now;
             this.invincibleUntil = now + 1000;
-            this.lastMoveTime = now;          
-            this.currentImages = 0;          
+            this.lastMoveTime = now;
+            this.currentImages = 0;
         }
     }
 
     /**
-     * Makes the character jump upward (sets vertical speed) and plays jump sound.
-     * Resets the flag that indicates a chicken was killed.
+     * Makes the character jump upward, plays jump sound, and resets the chicken‑kill flag.
      * @returns {void}
      */
     jump() {
         this.speedY = 30;
-        this.hasKilledChicken = false; 
+        this.hasKilledChicken = false;
         this.isJumping = true;
         this.currentImages = 0;
         this.world.sound.play('jump');

@@ -34,12 +34,7 @@ class ThrowableObject extends MoveableObject {
         this.height = 60;
         this.speedY = 20;
         this.speedX = direction === 'right' ? 6 : -6;
-        this.offset = {          
-            top: 10,
-            bottom: 10,
-            left: 15,
-            right: 15
-        };
+        this.offset = {top: 10, bottom: 10, left: 15, right: 15};
         this.applyGravity();
         this.throw();
         this.animate();
